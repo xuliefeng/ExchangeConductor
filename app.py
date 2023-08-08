@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 
-from data_collection.get_symbols import okx
+from data_collection.get_symbols import okx, huobi
 from database.db_service import get_symbols
 
 app = Flask(__name__)
@@ -12,6 +12,7 @@ CORS(app)
 def test():
     coins_stable, coins_reference = get_symbols()
     okx(coins_stable, coins_reference)
+    huobi(coins_stable, coins_reference)
     return "1", 200
 
 
