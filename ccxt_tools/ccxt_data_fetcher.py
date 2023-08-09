@@ -1,3 +1,5 @@
+import time
+
 import ccxt
 
 
@@ -8,6 +10,7 @@ def get_exchange():
 
 
 # get_exchange()
+
 def get_fetch_tickers():
     for exchange_id in ccxt.exchanges:
         exchange = getattr(ccxt, exchange_id)()
@@ -15,7 +18,17 @@ def get_fetch_tickers():
             print(exchange_id)
 
 
-get_fetch_tickers()
+# get_fetch_tickers()
+
+
+def get_fetch_order_book():
+    for exchange_id in ccxt.exchanges:
+        exchange = getattr(ccxt, exchange_id)()
+        if exchange.has['fetchOrderBook']:
+            print(exchange_id)
+
+
+# get_fetch_order_book()
 
 
 def get_all_symbols():
@@ -52,4 +65,14 @@ def get_one_symbols():
         print(f'  卖价: {ask_price}, 卖量: {ask_volume}')
 
 
-get_one_symbols()
+# get_one_symbols()
+
+def fetch_order_book():
+    exchange = ccxt.coinbasepro()
+    delay = 2
+    for symbol in exchange.load_markets():
+        print(exchange.fetch_order_book(symbol))
+        time.sleep(delay)
+
+
+fetch_order_book()
