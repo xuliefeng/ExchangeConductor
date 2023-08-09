@@ -4,6 +4,7 @@ import ssl
 import aiohttp
 import requests
 from data_processing import kraken as kraken_module
+from data_processing.kraken import insert_to_db
 
 
 def kraken(coins_s, coins_r):
@@ -14,19 +15,9 @@ def kraken(coins_s, coins_r):
         data = data['result']
         found_records = kraken_module.filter_symbols(coins_s, coins_r, data)
         prices = asyncio.run(kraken_depth(found_records))
-        print(type(prices))
-        print(len(prices))
+        insert_to_db(prices, coins_r)
     else:
         print(f"Request failed with status code {response.status_code}")
-
-
-async def fetch(pair, session, url):
-    async with session.get(url + pair) as response:
-        if response.status == 200:
-            return pair, await response.json()
-        else:
-            print(f"Request failed {pair} status code {response.status}")
-            return pair, None
 
 
 async def kraken_depth(found_records):
@@ -50,3 +41,12 @@ async def kraken_depth(found_records):
                 prices.append(result['result'])
 
     return prices
+
+
+async def fetch(pair, session, url):
+    async with session.get(url + pair) as response:
+        if response.status == 200:
+            return pair, await response.json()
+        else:
+            print(f"Request failed {pair} status code {response.status}")
+            return pair, None

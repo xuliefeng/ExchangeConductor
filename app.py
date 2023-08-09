@@ -13,8 +13,8 @@ CORS(app)
 @app.route("/api/get", methods=["GET"])
 def test():
     coins_stable, coins_reference = get_symbols()
-    # okx(coins_stable, coins_reference)
-    # huobi(coins_stable, coins_reference)
+    okx(coins_stable, coins_reference)
+    huobi(coins_stable, coins_reference)
     kraken(coins_stable, coins_reference)
 
     return "1", 200

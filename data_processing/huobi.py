@@ -18,7 +18,7 @@ def filter_symbols(coins_s, coins_r, data):
                 break
         if not found:
             not_found_coins.add(coin_stable)
-            print(f"Data not found for stable coin: {coin_stable} in huobi")
+            # print(f"Data not found for stable coin: {coin_stable} in huobi")
 
     return found_records, not_found_coins
 
