@@ -19,6 +19,8 @@ def filter_symbols(coins_s, coins_r, data):
             not_found_coins.add(coin_stable)
             # print(f"Data not found for stable coin: {coin_stable}")
 
+    print(f"Symbols found: {len(found_records)} in kraken")
+    print(f"Symbols not found : {len(not_found_coins)} in kraken")
     return found_records
 
 

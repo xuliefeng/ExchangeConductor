@@ -20,6 +20,8 @@ def filter_symbols(coins_s, coins_r, data):
             not_found_coins.add(coin_stable)
             # print(f"Data not found for stable coin: {coin_stable} in okx")
 
+    print(f"Symbols found: {len(found_records)} in okx")
+    print(f"Symbols not found : {len(not_found_coins)} in okx")
     return found_records, not_found_coins
 
 

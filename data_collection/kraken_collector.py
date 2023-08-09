@@ -1,23 +1,28 @@
 import asyncio
 import ssl
+import time
 
 import aiohttp
 import requests
-from data_processing import kraken_processor as kraken_module
-from data_processing.kraken_processor import insert_to_db
+from data_processing.kraken_processor import insert_to_db, filter_symbols
 
 
 def kraken(coins_s, coins_r):
+    start_time = time.time()
     url = "https://api.kraken.com/0/public/AssetPairs"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         data = data['result']
-        found_records = kraken_module.filter_symbols(coins_s, coins_r, data)
+        found_records = filter_symbols(coins_s, coins_r, data)
         prices = asyncio.run(kraken_depth(found_records))
         insert_to_db(prices, coins_r)
     else:
         print(f"Request failed with status code {response.status_code}")
+
+    end_time = time.time()
+    elapsed_time = round(end_time - start_time, 3)
+    print(f"kraken executed in {elapsed_time} seconds.")
 
 
 async def kraken_depth(found_records):
