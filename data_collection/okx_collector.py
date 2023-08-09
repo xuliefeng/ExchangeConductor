@@ -1,5 +1,5 @@
 import requests
-from data_processing import okx as okx_module
+from data_processing import okx_processor as okx_module
 
 
 def okx(coins_s, coins_r):

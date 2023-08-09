@@ -1,5 +1,5 @@
 import requests
-from data_processing import huobi as huobi_module
+from data_processing import huobi_processor as huobi_module
 
 
 def huobi(coins_s, coins_r):

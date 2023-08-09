@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
 
-from data_collection.huobi import huobi
-from data_collection.kraken import kraken
-from data_collection.oxk import okx
+from data_collection.huobi_collector import huobi
+from data_collection.kraken_collector import kraken
+from data_collection.okx_collector import okx
 from database.db_service import get_symbols
 
 app = Flask(__name__)

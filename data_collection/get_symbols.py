@@ -4,10 +4,10 @@ import ssl
 import aiohttp
 import requests
 
-from data_processing import okx as okx_module
-from data_processing import huobi as huobi_module
-from data_processing import kucoin as kucoin_module
-from data_processing import kraken as kraken_module
+from data_processing import okx_processor as okx_module
+from data_processing import huobi_processor as huobi_module
+from data_processing import kucoin_processor as kucoin_module
+from data_processing import kraken_processor as kraken_module
 
 
 

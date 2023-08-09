@@ -3,8 +3,8 @@ import ssl
 
 import aiohttp
 import requests
-from data_processing import kraken as kraken_module
-from data_processing.kraken import insert_to_db
+from data_processing import kraken_processor as kraken_module
+from data_processing.kraken_processor import insert_to_db
 
 
 def kraken(coins_s, coins_r):
