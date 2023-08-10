@@ -53,5 +53,5 @@ async def fetch(pair, session, url):
         if response.status == 200:
             return pair, await response.json()
         else:
-            print(f"Request failed {pair} status code {response.status}")
+            print(f"Request failed {pair} status code {response.status} - kraken")
             return pair, None
