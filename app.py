@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from flask import Flask
 from flask_cors import CORS
 
-from data_collection import gateio_collector
 from data_collection.gateio_collector import gateio
 from data_collection.huobi_collector import huobi
 from data_collection.kraken_collector import kraken
@@ -31,8 +30,7 @@ def execute_in_parallel(coins_stable, coins_reference):
 @app.route("/api/get", methods=["GET"])
 def test():
     coins_stable, coins_reference = get_symbols()
-    # gateio_collector.gateio(coins_stable, coins_reference)
-    execute_in_parallel(coins_stable, coins_reference)
+    # execute_in_parallel(coins_stable, coins_reference)
 
     return "1", 200
 
