@@ -20,4 +20,4 @@ def okx(coins_s, coins_r):
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    print(f"okx executed in {elapsed_time} seconds.")
+    print(f"---------------------------------------------------------------------------------------------------- okx executed in {elapsed_time} seconds.")

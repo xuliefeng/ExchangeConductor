@@ -22,7 +22,7 @@ def kraken(coins_s, coins_r):
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    print(f"kraken executed in {elapsed_time} seconds.")
+    print(f"---------------------------------------------------------------------------------------------------- kraken executed in {elapsed_time} seconds.")
 
 
 async def kraken_depth(found_records):

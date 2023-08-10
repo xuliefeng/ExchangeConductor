@@ -20,4 +20,4 @@ def huobi(coins_s, coins_r):
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    print(f"huobi executed in {elapsed_time} seconds.")
+    print(f"---------------------------------------------------------------------------------------------------- huobi executed in {elapsed_time} seconds.")

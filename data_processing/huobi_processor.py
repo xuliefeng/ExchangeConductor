@@ -20,8 +20,7 @@ def filter_symbols(coins_s, coins_r, data):
             not_found_coins.add(coin_stable)
             # print(f"Data not found for stable coin: {coin_stable} in huobi")
 
-    print(f"Symbols found: {len(found_records)} in huobi")
-    print(f"Symbols not found : {len(not_found_coins)} in huobi")
+    print(f"huobi - symbols found: {len(found_records)} symbols not found : {len(not_found_coins)}")
     return found_records, not_found_coins
 
 
@@ -34,7 +33,7 @@ def insert_to_db(data, coins_r):
 
     query = """
         INSERT INTO trade_data (
-            coin_name, bid, bid_size, ask, ask_size, update_time, remark
+            coin_name, bid, bid_size, ask, ask_size, update_time, exchange_name
         ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'huobi');
     """
 
