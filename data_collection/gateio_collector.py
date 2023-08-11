@@ -15,7 +15,7 @@ def gateio(coins_s, coins_r):
 
     if response.status_code == 200:
         data = response.json()
-        found_records, not_found_coins = filter_symbols(coins_s, coins_r, data)
+        found_records = filter_symbols(coins_s, coins_r, data)
         prices = asyncio.run(gateio_depth(found_records))
         insert_to_db(prices)
     else:

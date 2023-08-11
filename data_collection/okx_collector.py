@@ -13,7 +13,7 @@ def okx(coins_s, coins_r):
     if response.status_code == 200:
         data = response.json()
         data = data['data']
-        found_records, not_found_coins = filter_symbols(coins_s, coins_r, data)
+        found_records = filter_symbols(coins_s, coins_r, data)
         okx_module.insert_to_db(found_records)
     else:
         print(f"Request failed with status code {response.status_code}")

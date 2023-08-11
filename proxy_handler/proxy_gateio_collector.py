@@ -1,34 +1,42 @@
 import asyncio
 import ssl
 import time
+import random
 
 import aiohttp
 import requests
 
-from data_processing.kucoin_processor import filter_symbols, insert_to_db
+from data_processing.gateio_processor import filter_symbols, insert_to_db
+from proxy_handler.proxy_loader import load_proxies_from_file
+
+proxies = load_proxies_from_file()
 
 
-def kucoin(coins_s, coins_r):
+def select_proxy():
+    return random.choice(proxies)
+
+
+def gateio(coins_s, coins_r):
     start_time = time.time()
-    url = "https://api.kucoin.com/api/v1/symbols"
+    url = "https://api.gateio.ws/api/v4/spot/tickers"
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
-        data = data['data']
         found_records = filter_symbols(coins_s, coins_r, data)
-        prices = asyncio.run(kucoin_depth(found_records))
+        prices = asyncio.run(gateio_depth(found_records))
         insert_to_db(prices)
     else:
         print(f"Request failed with status code {response.status_code}")
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    print(f"---------------------------------------------------------------------------------------------------- kucoin executed in {elapsed_time} seconds.")
+    print(
+        f"---------------------------------------------------------------------------------------------------- gateio executed in {elapsed_time} seconds.")
 
 
-async def kucoin_depth(found_records):
-    url = "https://api.kucoin.com/api/v1/market/orderbook/level1?symbol="
+async def gateio_depth(found_records):
+    url = "https://api.gateio.ws/api/v4/spot/order_book?currency_pair="
     tasks = []
     prices = {}
 
@@ -38,7 +46,8 @@ async def kucoin_depth(found_records):
 
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_context)) as session:
         for pair in found_records:
-            task = fetch(pair, session, url)
+            proxy = select_proxy()
+            task = fetch(pair, session, url, proxy)
             tasks.append(task)
 
         results = await asyncio.gather(*tasks)
@@ -50,10 +59,10 @@ async def kucoin_depth(found_records):
     return prices
 
 
-async def fetch(pair, session, url):
-    async with session.get(url + pair) as response:
+async def fetch(pair, session, url, proxy):
+    async with session.get(url + pair, proxy=proxy) as response:
         if response.status == 200:
             return pair, await response.json()
         else:
-            print(f"Request failed {pair} status code {response.status} - kucoin")
+            print(f"Request failed {pair} status code {response.status} - gateio")
             return pair, None

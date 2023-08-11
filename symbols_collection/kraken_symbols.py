@@ -7,7 +7,6 @@ coins_stable, coins_reference = get_symbols()
 
 
 def kraken():
-
     url = "https://api.kraken.com/0/public/AssetPairs"
     response = requests.get(url)
     if response.status_code == 200:
@@ -16,7 +15,6 @@ def kraken():
         insert_to_db(data, coins_reference)
     else:
         print(f"Request failed with status code {response.status_code}")
-
 
 
 def insert_to_db(data, coins_r):

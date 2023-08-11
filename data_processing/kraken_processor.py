@@ -3,23 +3,16 @@ from database.db_pool import release_connection, get_connection
 
 def filter_symbols(coins_s, coins_r, data):
     found_records = []
-    not_found_coins = set()
 
     inst_ids_set = set(data.keys())
 
     for coin_stable in coins_s:
-        found = False
         for coin_reference in coins_r:
             combined_id = f"{coin_stable}{coin_reference}"
-            if combined_id.upper() in inst_ids_set:
-                found_records.append(combined_id.upper())
-                found = True
-                break
-        if not found:
-            not_found_coins.add(coin_stable)
-            # print(f"Data not found for stable coin: {coin_stable}")
+            if combined_id in inst_ids_set:
+                found_records.append(combined_id)
 
-    print(f"kraken - symbols found: {len(found_records)} symbols not found : {len(not_found_coins)}")
+    print(f"kraken - symbols found: {len(found_records)}")
     return found_records
 
 

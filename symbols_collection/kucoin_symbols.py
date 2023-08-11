@@ -18,7 +18,6 @@ def kucoin():
         print(f"Request failed with status code {response.status_code}")
 
 
-
 def insert_to_db(data, coins_r):
     connection = get_connection()
     cursor = connection.cursor()

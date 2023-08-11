@@ -3,25 +3,18 @@ from database.db_pool import release_connection, get_connection
 
 def filter_symbols(coins_s, coins_r, data):
     found_records = []
-    not_found_coins = set()
 
     inst_ids_set = set(item['instId'] for item in data)
 
     for coin_stable in coins_s:
-        found = False
         for coin_reference in coins_r:
             combined_id = f"{coin_stable}-{coin_reference}"
             if combined_id in inst_ids_set:
                 found_records.append([item for item in data if item['instId'] == combined_id][0])
                 # print(f"Data found for stable coin: {combined_id} in okx")
-                found = True
-                break
-        if not found:
-            not_found_coins.add(coin_stable)
-            # print(f"Data not found for stable coin: {coin_stable} in okx")
 
-    print(f"okx - symbols found: {len(found_records)} symbols not found : {len(not_found_coins)}")
-    return found_records, not_found_coins
+    print(f"okx - symbols found: {len(found_records)}")
+    return found_records
 
 
 def insert_to_db(data):

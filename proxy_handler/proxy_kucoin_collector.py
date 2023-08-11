@@ -1,18 +1,25 @@
 import asyncio
 import ssl
 import time
+import random
 
 import aiohttp
 import requests
 
 from data_processing.kucoin_processor import filter_symbols, insert_to_db
+from proxy_handler.proxy_loader import load_proxies_from_file
+
+proxies = load_proxies_from_file()
+
+
+def select_proxy():
+    return random.choice(proxies)
 
 
 def kucoin(coins_s, coins_r):
     start_time = time.time()
     url = "https://api.kucoin.com/api/v1/symbols"
     response = requests.get(url)
-
     if response.status_code == 200:
         data = response.json()
         data = data['data']
@@ -24,7 +31,8 @@ def kucoin(coins_s, coins_r):
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    print(f"---------------------------------------------------------------------------------------------------- kucoin executed in {elapsed_time} seconds.")
+    print(
+        f"---------------------------------------------------------------------------------------------------- kucoin executed in {elapsed_time} seconds.")
 
 
 async def kucoin_depth(found_records):
@@ -38,7 +46,8 @@ async def kucoin_depth(found_records):
 
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_context)) as session:
         for pair in found_records:
-            task = fetch(pair, session, url)
+            proxy = select_proxy()
+            task = fetch(pair, session, url, proxy)
             tasks.append(task)
 
         results = await asyncio.gather(*tasks)
@@ -50,8 +59,8 @@ async def kucoin_depth(found_records):
     return prices
 
 
-async def fetch(pair, session, url):
-    async with session.get(url + pair) as response:
+async def fetch(pair, session, url, proxy):
+    async with session.get(url + pair, proxy=proxy) as response:
         if response.status == 200:
             return pair, await response.json()
         else:
