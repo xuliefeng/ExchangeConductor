@@ -21,9 +21,7 @@ def insert_to_db(data, coins_r):
     connection = get_connection()
     cursor = connection.cursor()
 
-    print(len(data))
     filtered_symbols = transform_and_filter_symbols(data, coins_r)
-    print(len(filtered_symbols))
 
     inst_ids_tuples = [(inst_id,) for inst_id in filtered_symbols]
     sql = "INSERT INTO coins_stable (coin_name, remark) VALUES (%s, 'kraken')"
@@ -37,15 +35,41 @@ def insert_to_db(data, coins_r):
 
 def transform_and_filter_symbols(data, coins_r):
     transformed_symbols = []
+    unmatched_symbols = []
+    seen_prefixes = set()
 
     for item in data:
+        symbol = item
+
+        for match in seen_prefixes:
+            if symbol.startswith(match):
+                continue
+
+        matched = False
         for match in coins_r:
-            if item.endswith(match):
-                transformed_symbol = str(item[:-len(match)])
+            if symbol.endswith(match):
+                transformed_symbol = str(symbol[:-len(match)]) + '-' + match
                 transformed_symbols.append(transformed_symbol)
+                seen_prefixes.add(str(symbol[:-len(match)]))
+                matched = True
                 break
 
+        if not matched:
+            unmatched_symbols.append(symbol)
+
+    for unmatched in unmatched_symbols:
+        print(f"kraken_unmatched_symbols : {unmatched}")
+
+    with open('kraken_unmatched_symbols.txt', 'w') as file:
+        for unmatched in unmatched_symbols:
+            file.write(f"kraken_unmatched_symbols : {unmatched}" + '\n')
+        file.write(str(len(data)) + '\n')
+        file.write(str(len(transformed_symbols)) + '\n')
+
+    print(len(data))
+    print(len(transformed_symbols))
     return transformed_symbols
+
 
 
 kraken()

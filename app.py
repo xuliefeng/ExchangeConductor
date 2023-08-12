@@ -30,8 +30,8 @@ def execute_in_parallel(coins_stable, coins_reference):
 @app.route("/api/get", methods=["GET"])
 def test():
     coins_stable, coins_reference = get_symbols()
-    execute_in_parallel(coins_stable, coins_reference)
-    # okx(coins_stable, coins_reference)
+    # execute_in_parallel(coins_stable, coins_reference)
+    okx(coins_stable, coins_reference)
     return "1", 200
 
 
