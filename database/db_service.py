@@ -11,6 +11,6 @@ def fetch_coin_names(table_name):
 
 
 def get_symbols():
-    symbols = fetch_coin_names("coins_stable")
-    coins_reference = fetch_coin_names("coins_reference")
-    return symbols, coins_reference
+    symbols = fetch_coin_names("symbols")
+    reference = fetch_coin_names("reference")
+    return symbols, reference

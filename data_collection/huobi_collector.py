@@ -3,12 +3,9 @@ import time
 import requests
 from data_processing import huobi_processor as huobi_module
 from data_processing.huobi_processor import filter_symbols
-from database.db_service import get_symbols
-
-coins_stable, coins_reference = get_symbols()
 
 
-def huobi(symbols):
+def huobi(symbols, reference):
     start_time = time.time()
     url = "https://api.huobi.pro/market/tickers"
     response = requests.get(url)
@@ -17,7 +14,7 @@ def huobi(symbols):
         data = response.json()
         data = data['data']
         found_records = filter_symbols(symbols, data)
-        huobi_module.insert_to_db(found_records, coins_reference)
+        huobi_module.insert_to_db(found_records, reference)
     else:
         print(f"Request failed with status code {response.status_code}")
 

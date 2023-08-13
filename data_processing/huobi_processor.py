@@ -16,12 +16,12 @@ def filter_symbols(symbols, data):
     return found_records
 
 
-def insert_to_db(found_records, coins_r):
+def insert_to_db(found_records, reference):
     connection = get_connection()
     cursor = connection.cursor()
 
     for item in found_records:
-        item['symbol'] = transform_symbol(item['symbol'], coins_r)
+        item['symbol'] = transform_symbol(item['symbol'], reference)
 
     query = """
         INSERT INTO trade_data (
@@ -48,8 +48,8 @@ def insert_to_db(found_records, coins_r):
     release_connection(connection)
 
 
-def transform_symbol(symbol, coins_r):
-    for match in coins_r:
+def transform_symbol(symbol, reference):
+    for match in reference:
         if symbol.endswith(match.lower()):
             return str(symbol[:-len(match)]).upper() + '-' + match
     return symbol.upper()

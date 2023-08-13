@@ -3,14 +3,13 @@ from database.db_pool import release_connection, get_connection
 
 def filter_symbols(symbols, data):
     found_records = []
-
     inst_ids_set = set(item['currency_pair'] for item in data)
 
     for symbol in symbols:
         symbol = str(symbol).replace('-', '_')
         if symbol in inst_ids_set:
             found_records.append(symbol)
-    print(f"gateio - symbols found: {len(found_records)}")
+    print(f"gate_io - symbols found: {len(found_records)}")
     return found_records
 
 
@@ -21,17 +20,17 @@ def insert_to_db(data):
     query = """
         INSERT INTO trade_data (
             coin_name, ask, ask_size, bid, bid_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'gateio');
+        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'gate_io');
     """
 
     records_to_insert = []
-    for pair, result in data.items():
-        pair = pair.replace("_", "-")
+    for symbol, result in data.items():
+        symbol = symbol.replace("_", "-")
         ask_price, ask_size = result['asks'][0]
         bid_price, bid_size = result['bids'][0]
 
         record = (
-            pair,
+            symbol,
             ask_price,
             ask_size,
             bid_price,

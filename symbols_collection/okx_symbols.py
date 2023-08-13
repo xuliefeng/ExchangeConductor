@@ -2,7 +2,7 @@ import requests
 from database.db_pool import get_connection, release_connection
 from database.db_service import get_symbols
 
-coins_stable, coins_reference = get_symbols()
+symbols, reference = get_symbols()
 
 
 def okx():
@@ -12,19 +12,19 @@ def okx():
     if response.status_code == 200:
         data = response.json()
         data = data['data']
-        insert_to_db(data, coins_reference)
+        insert_to_db(data, reference)
     else:
         print(f"Request failed with status code {response.status_code}")
 
 
-def insert_to_db(data, coins_r):
+def insert_to_db(data, ref):
     connection = get_connection()
     cursor = connection.cursor()
 
-    filtered_symbols = transform_and_filter_symbols(data, coins_r)
+    filtered_symbols = transform_and_filter_symbols(data, ref)
 
     inst_ids_tuples = [(inst_id,) for inst_id in filtered_symbols]
-    sql = "INSERT INTO coins_stable (coin_name, remark) VALUES (%s, 'okx')"
+    sql = "INSERT INTO symbols (coin_name, remark) VALUES (%s, 'okx')"
 
     cursor.executemany(sql, inst_ids_tuples)
 
@@ -33,7 +33,7 @@ def insert_to_db(data, coins_r):
     print(f"{len(filtered_symbols)} record(s) inserted.")
 
 
-def transform_and_filter_symbols(data, coins_r):
+def transform_and_filter_symbols(data, ref):
     transformed_symbols = []
     unmatched_symbols = []
 
@@ -45,7 +45,7 @@ def transform_and_filter_symbols(data, coins_r):
 
     for base_currency in base_symbols:
         found = False
-        for ref_currency in coins_r:
+        for ref_currency in ref:
             matched_symbol = f"{base_currency}-{ref_currency}"
             if matched_symbol in [item['instId'] for item in data]:
                 transformed_symbols.append(matched_symbol)

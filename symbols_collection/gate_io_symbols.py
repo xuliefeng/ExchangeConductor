@@ -3,28 +3,28 @@ import requests
 from database.db_pool import get_connection, release_connection
 from database.db_service import get_symbols
 
-coins_stable, coins_reference = get_symbols()
+symbols, reference = get_symbols()
 
 
-def gateio():
+def gate_io():
     url = "https://api.gateio.ws/api/v4/spot/tickers"
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
-        insert_to_db(data, coins_reference)
+        insert_to_db(data, reference)
     else:
         print(f"Request failed with status code {response.status_code}")
 
 
-def insert_to_db(data, coins_r):
+def insert_to_db(data, ref):
     connection = get_connection()
     cursor = connection.cursor()
 
-    filtered_symbols = transform_and_filter_symbols(data, coins_r)
+    filtered_symbols = transform_and_filter_symbols(data, ref)
 
     inst_ids_tuples = [(inst_id,) for inst_id in filtered_symbols]
-    sql = "INSERT INTO coins_stable (coin_name, remark) VALUES (%s, 'gateio')"
+    sql = "INSERT INTO symbols (coin_name, remark) VALUES (%s, 'gate_io')"
 
     cursor.executemany(sql, inst_ids_tuples)
 
@@ -33,7 +33,7 @@ def insert_to_db(data, coins_r):
     print(f"{len(filtered_symbols)} record(s) inserted.")
 
 
-def transform_and_filter_symbols(data, coins_r):
+def transform_and_filter_symbols(data, ref):
     transformed_symbols = []
     unmatched_symbols = []
 
@@ -45,7 +45,7 @@ def transform_and_filter_symbols(data, coins_r):
 
     for base_currency in base_symbols:
         found = False
-        for ref_currency in coins_r:
+        for ref_currency in ref:
             matched_symbol = f"{base_currency}_{ref_currency}"
             if matched_symbol in [item['currency_pair'] for item in data]:
                 transformed_symbols.append(base_currency + '-' + ref_currency)
@@ -55,11 +55,11 @@ def transform_and_filter_symbols(data, coins_r):
             unmatched_symbols.append(base_currency)
 
     for unmatched in unmatched_symbols:
-        print(f"gateio_unmatched_symbols : {unmatched}")
+        print(f"gate_io_unmatched_symbols : {unmatched}")
 
-    with open('gateio_unmatched_symbols.txt', 'w') as file:
+    with open('gate_io_unmatched_symbols.txt', 'w') as file:
         for unmatched in unmatched_symbols:
-            file.write(f"gateio_unmatched_symbols : {unmatched}" + '\n')
+            file.write(f"gate_io_unmatched_symbols : {unmatched}" + '\n')
         file.write(f"symbols :               {len(data)}" + '\n')
         file.write(f"base_symbols :          {len(base_symbols)}" + '\n')
         file.write(f"transformed_symbols :   {len(transformed_symbols)}" + '\n')
@@ -70,4 +70,4 @@ def transform_and_filter_symbols(data, coins_r):
     return transformed_symbols
 
 
-gateio()
+gate_io()
