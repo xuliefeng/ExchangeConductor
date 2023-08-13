@@ -1,4 +1,8 @@
+import asyncio
 import os
+import ssl
+
+import aiohttp
 import requests
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -18,17 +22,16 @@ def load_proxies_from_file():
     with open(file_path, 'r') as file:
         return [line.strip() for line in file.readlines()]
 
+
 # proxies = load_proxies_from_file()
 # print(proxies)
-
-
+#
 # proxies = {
-#     "http": "https://DEO06D7RI:j8oq7wya@45.132.184.60:8080",
-#     "https": "https://DEO06D7RI:j8oq7wya@45.132.184.60:8080"
+#     "http": "http://hlyEyMNDrb6TKgq:3d669eUHTKTRSKb@74.50.9.44:43624",
 # }
 #
 # try:
-#     response = requests.get("https://ipinfo.io", proxies=proxies, timeout=10)
+#     response = requests.get("https://api.gateio.ws/api/v4/spot/order_book?currency_pair=BTC_USDT", proxies=proxies, timeout=10)
 #     if response.status_code == 200:
 #         print(response.text)
 #     else:
@@ -49,3 +52,9 @@ def load_proxies_from_file():
 #         f.write(proxy + "\n")
 #
 # print("Format conversion complete!")
+
+
+
+
+
+
