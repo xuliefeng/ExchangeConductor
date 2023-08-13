@@ -1,5 +1,4 @@
 import requests
-
 from database.db_pool import get_connection, release_connection
 from database.db_service import get_symbols
 
@@ -37,26 +36,23 @@ def insert_to_db(data, coins_r):
 def transform_and_filter_symbols(data, coins_r):
     transformed_symbols = []
     unmatched_symbols = []
-    seen_prefixes = set()
 
+    base_symbols = set()
     for item in data:
         symbol = item['symbol']
+        base_currency, _ = symbol.split('-')
+        base_symbols.add(base_currency)
 
-        for match in seen_prefixes:
-            if symbol.startswith(match):
-                continue
-
-        matched = False
-        for match in coins_r:
-            if symbol.endswith(match):
-                transformed_symbols.append(symbol)
-                prefix = str(symbol[:-len(match) - 1])
-                seen_prefixes.add(prefix)
-                matched = True
+    for base_currency in base_symbols:
+        found = False
+        for ref_currency in coins_r:
+            matched_symbol = f"{base_currency}-{ref_currency}"
+            if matched_symbol in [item['symbol'] for item in data]:
+                transformed_symbols.append(matched_symbol)
+                found = True
                 break
-
-        if not matched:
-            unmatched_symbols.append(symbol)
+        if not found:
+            unmatched_symbols.append(base_currency)
 
     for unmatched in unmatched_symbols:
         print(f"kucoin_unmatched_symbols : {unmatched}")
@@ -64,11 +60,13 @@ def transform_and_filter_symbols(data, coins_r):
     with open('kucoin_unmatched_symbols.txt', 'w') as file:
         for unmatched in unmatched_symbols:
             file.write(f"kucoin_unmatched_symbols : {unmatched}" + '\n')
-        file.write(str(len(data)) + '\n')
-        file.write(str(len(transformed_symbols)) + '\n')
+        file.write(f"symbols :               {len(data)}" + '\n')
+        file.write(f"base_symbols :          {len(base_symbols)}" + '\n')
+        file.write(f"transformed_symbols :   {len(transformed_symbols)}" + '\n')
 
-    print(len(data))
-    print(len(transformed_symbols))
+    print(f"symbols :               {len(data)}")
+    print(f"base_symbols :          {len(base_symbols)}")
+    print(f"transformed_symbols :   {len(transformed_symbols)}")
     return transformed_symbols
 
 

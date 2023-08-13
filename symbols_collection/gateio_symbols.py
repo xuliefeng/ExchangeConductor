@@ -36,27 +36,23 @@ def insert_to_db(data, coins_r):
 def transform_and_filter_symbols(data, coins_r):
     transformed_symbols = []
     unmatched_symbols = []
-    seen_prefixes = set()
 
+    base_symbols = set()
     for item in data:
         symbol = item['currency_pair']
+        base_currency, _ = symbol.split('_')
+        base_symbols.add(base_currency)
 
-        for match in seen_prefixes:
-            if symbol.startswith(match):
-                continue
-
-        matched = False
-        for match in coins_r:
-            if symbol.endswith(match):
-                transformed_symbol = str(symbol[:-len(match) - 1]) + '-' + match
-                transformed_symbols.append(transformed_symbol)
-                prefix = str(symbol[:-len(match) - 1])
-                seen_prefixes.add(prefix)
-                matched = True
+    for base_currency in base_symbols:
+        found = False
+        for ref_currency in coins_r:
+            matched_symbol = f"{base_currency}_{ref_currency}"
+            if matched_symbol in [item['currency_pair'] for item in data]:
+                transformed_symbols.append(base_currency + '-' + ref_currency)
+                found = True
                 break
-
-        if not matched:
-            unmatched_symbols.append(symbol)
+        if not found:
+            unmatched_symbols.append(base_currency)
 
     for unmatched in unmatched_symbols:
         print(f"gateio_unmatched_symbols : {unmatched}")
@@ -64,11 +60,13 @@ def transform_and_filter_symbols(data, coins_r):
     with open('gateio_unmatched_symbols.txt', 'w') as file:
         for unmatched in unmatched_symbols:
             file.write(f"gateio_unmatched_symbols : {unmatched}" + '\n')
-        file.write(str(len(data)) + '\n')
-        file.write(str(len(transformed_symbols)) + '\n')
+        file.write(f"symbols :               {len(data)}" + '\n')
+        file.write(f"base_symbols :          {len(base_symbols)}" + '\n')
+        file.write(f"transformed_symbols :   {len(transformed_symbols)}" + '\n')
 
-    print(len(data))
-    print(len(transformed_symbols))
+    print(f"symbols :               {len(data)}")
+    print(f"base_symbols :          {len(base_symbols)}")
+    print(f"transformed_symbols :   {len(transformed_symbols)}")
     return transformed_symbols
 
 
