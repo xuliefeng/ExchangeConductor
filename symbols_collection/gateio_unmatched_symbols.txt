@@ -1,0 +1,5 @@
+gateio_unmatched_symbols : USDT
+gateio_unmatched_symbols : LLT
+symbols :               3055
+base_symbols :          2057
+transformed_symbols :   2055

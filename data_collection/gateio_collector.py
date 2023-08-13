@@ -8,14 +8,14 @@ import requests
 from data_processing.gateio_processor import filter_symbols, insert_to_db
 
 
-def gateio(coins_s, coins_r):
+def gateio(symbols):
     start_time = time.time()
     url = "https://api.gateio.ws/api/v4/spot/tickers"
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
-        found_records = filter_symbols(coins_s, coins_r, data)
+        found_records = filter_symbols(symbols, data)
         prices = asyncio.run(gateio_depth(found_records))
         insert_to_db(prices)
     else:

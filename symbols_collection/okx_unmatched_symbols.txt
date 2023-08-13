@@ -1,0 +1,5 @@
+okx_unmatched_symbols : OKDOT1
+okx_unmatched_symbols : OKDOT2
+symbols :               562
+base_symbols :          335
+transformed_symbols :   333

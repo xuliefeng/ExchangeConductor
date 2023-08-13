@@ -1,17 +1,15 @@
 from database.db_pool import release_connection, get_connection
 
 
-def filter_symbols(coins_s, coins_r, data):
+def filter_symbols(symbols, data):
     found_records = []
 
     inst_ids_set = set(item['instId'] for item in data)
 
-    for coin_stable in coins_s:
-        for coin_reference in coins_r:
-            combined_id = f"{coin_stable}-{coin_reference}"
-            if combined_id in inst_ids_set:
-                found_records.append([item for item in data if item['instId'] == combined_id][0])
-                # print(f"Data found for stable coin: {combined_id} in okx")
+    for symbol in symbols:
+        if symbol in inst_ids_set:
+            found_records.append([item for item in data if item['instId'] == symbol][0])
+            # print(f"Data found for stable coin: {combined_id} in okx")
 
     print(f"okx - symbols found: {len(found_records)}")
     return found_records

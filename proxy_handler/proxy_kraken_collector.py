@@ -5,7 +5,7 @@ import random
 
 import aiohttp
 import requests
-from data_processing.kraken_processor import insert_to_db, filter_symbols
+from data_processing.discarded_kraken_processor import insert_to_db, filter_symbols
 from proxy_handler.proxy_loader import load_proxies_from_file
 
 proxies = load_proxies_from_file()

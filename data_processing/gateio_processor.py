@@ -1,17 +1,15 @@
 from database.db_pool import release_connection, get_connection
 
 
-def filter_symbols(coins_s, coins_r, data):
+def filter_symbols(symbols, data):
     found_records = []
 
     inst_ids_set = set(item['currency_pair'] for item in data)
 
-    for coin_stable in coins_s:
-        for coin_reference in coins_r:
-            combined_id = f"{coin_stable}_{coin_reference}"
-            if combined_id in inst_ids_set:
-                found_records.append(combined_id)
-
+    for symbol in symbols:
+        symbol = str(symbol).replace('-', '_')
+        if symbol in inst_ids_set:
+            found_records.append(symbol)
     print(f"gateio - symbols found: {len(found_records)}")
     return found_records
 

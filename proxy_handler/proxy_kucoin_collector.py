@@ -6,7 +6,7 @@ import random
 import aiohttp
 import requests
 
-from data_processing.kucoin_processor import filter_symbols, insert_to_db
+from data_processing.discarded_kucoin_processor import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import load_proxies_from_file
 
 proxies = load_proxies_from_file()
