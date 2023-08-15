@@ -29,7 +29,7 @@ def insert_to_db(data, ref):
 
     connection.commit()
     release_connection(connection)
-    print(f"{len(filtered_symbols)} record(s) inserted.")
+    print(f"{len(filtered_symbols)} record(s) inserted bit_venus")
 
 
 def transform_and_filter_symbols(data, ref):
