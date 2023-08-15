@@ -5,13 +5,13 @@ from database.db_service import get_symbols
 symbols, reference = get_symbols()
 
 
-def xt():
-    url = "https://sapi.xt.com/v4/public/ticker/book"
+def l_bank():
+    url = "https://api.lbank.info/v2/accuracy.do"
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
-        data = data['result']
+        data = data['data']
         insert_to_db(data, reference)
     else:
         print(f"Request failed with status code {response.status_code}")
@@ -24,13 +24,13 @@ def insert_to_db(data, ref):
     filtered_symbols = transform_and_filter_symbols(data, ref)
 
     inst_ids_tuples = [(inst_id,) for inst_id in filtered_symbols]
-    sql = "INSERT INTO symbols (symbol_name, remark) VALUES (%s, 'xt')"
+    sql = "INSERT INTO symbols (symbol_name, remark) VALUES (%s, 'l_bank')"
 
     cursor.executemany(sql, inst_ids_tuples)
 
     connection.commit()
     release_connection(connection)
-    print(f"{len(filtered_symbols)} record(s) inserted xt")
+    print(f"{len(filtered_symbols)} record(s) inserted l_bank")
 
 
 def transform_and_filter_symbols(data, ref):
@@ -39,7 +39,7 @@ def transform_and_filter_symbols(data, ref):
 
     base_symbols = set()
     for item in data:
-        symbol = item['s']
+        symbol = item['symbol']
         base_currency, _ = symbol.split('_')
         base_symbols.add(base_currency)
 
@@ -47,7 +47,7 @@ def transform_and_filter_symbols(data, ref):
         found = False
         for ref_currency in ref:
             matched_symbol = f"{base_currency}_{str(ref_currency).lower()}"
-            if matched_symbol in [item['s'] for item in data]:
+            if matched_symbol in [item['symbol'] for item in data]:
                 transformed_symbols.append(str(base_currency).upper() + '-' + ref_currency)
                 found = True
                 break
@@ -55,11 +55,11 @@ def transform_and_filter_symbols(data, ref):
             unmatched_symbols.append(base_currency)
 
     for unmatched in unmatched_symbols:
-        print(f"xt_unmatched_symbols : {unmatched}")
+        print(f"l_bank_unmatched_symbols : {unmatched}")
 
-    with open('xt_unmatched_symbols.txt', 'w') as file:
+    with open('l_bank_unmatched_symbols.txt', 'w') as file:
         for unmatched in unmatched_symbols:
-            file.write(f"xt_unmatched_symbols : {unmatched}" + '\n')
+            file.write(f"l_bank_unmatched_symbols : {unmatched}" + '\n')
         file.write(f"symbols :               {len(data)}" + '\n')
         file.write(f"base_symbols :          {len(base_symbols)}" + '\n')
         file.write(f"transformed_symbols :   {len(transformed_symbols)}" + '\n')

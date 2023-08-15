@@ -69,5 +69,3 @@ def transform_and_filter_symbols(data, ref):
     print(f"base_symbols :          {len(base_symbols)}")
     print(f"transformed_symbols :   {len(transformed_symbols)}")
     return transformed_symbols
-
-bybit()
