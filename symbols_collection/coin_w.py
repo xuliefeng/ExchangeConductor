@@ -1,17 +1,18 @@
 import requests
+
 from database.db_pool import get_connection, release_connection
 from database.db_service import get_symbols
 
 symbols, reference = get_symbols()
 
 
-# t传统交易对 f融资 带冒号的币对未处理 tLUNA2:UST
-def bitfinex():
-    url = "https://api-pub.bitfinex.com/v2/tickers?symbols=ALL"
+def coin_w():
+    url = "https://api.coinw.com/api/v1/public?command=returnSymbol"
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
+        data = data['data']
         insert_to_db(data, reference)
     else:
         print(f"Request failed with status code {response.status_code}")
@@ -24,7 +25,7 @@ def insert_to_db(data, ref):
     filtered_symbols = transform_and_filter_symbols(data, ref)
 
     inst_ids_tuples = [(inst_id,) for inst_id in filtered_symbols]
-    sql = "INSERT INTO symbols (coin_name, remark) VALUES (%s, 'bitfinex')"
+    sql = "INSERT INTO symbols (coin_name, remark) VALUES (%s, 'coin_w')"
 
     cursor.executemany(sql, inst_ids_tuples)
 
@@ -39,20 +40,15 @@ def transform_and_filter_symbols(data, ref):
 
     base_symbols = set()
     for item in data:
-        symbol = item[0]
-        if str(symbol).startswith('t'):
-            if ':' in symbol:
-                continue
-            symbol = str(symbol).replace('t', '')
-            for match in ref:
-                if symbol.endswith(match):
-                    base_symbols.add(str(symbol[:-len(match)]))
+        symbol = item['currencyPair']
+        base_currency, _ = symbol.split('_')
+        base_symbols.add(base_currency)
 
     for base_currency in base_symbols:
         found = False
         for ref_currency in ref:
-            matched_symbol = f"t{base_currency}{ref_currency}"
-            if matched_symbol in [item[0] for item in data]:
+            matched_symbol = f"{base_currency}_{ref_currency}"
+            if matched_symbol in [item['currencyPair'] for item in data]:
                 transformed_symbols.append(base_currency + '-' + ref_currency)
                 found = True
                 break
@@ -60,11 +56,11 @@ def transform_and_filter_symbols(data, ref):
             unmatched_symbols.append(base_currency)
 
     for unmatched in unmatched_symbols:
-        print(f"bitfinex_unmatched_symbols : {unmatched}")
+        print(f"coin_w_unmatched_symbols : {unmatched}")
 
-    with open('bitfinex_unmatched_symbols.txt', 'w') as file:
+    with open('coin_w_unmatched_symbols.txt', 'w') as file:
         for unmatched in unmatched_symbols:
-            file.write(f"bitfinex_unmatched_symbols : {unmatched}" + '\n')
+            file.write(f"coin_w_unmatched_symbols : {unmatched}" + '\n')
         file.write(f"symbols :               {len(data)}" + '\n')
         file.write(f"base_symbols :          {len(base_symbols)}" + '\n')
         file.write(f"transformed_symbols :   {len(transformed_symbols)}" + '\n')
@@ -75,4 +71,4 @@ def transform_and_filter_symbols(data, ref):
     return transformed_symbols
 
 
-bitfinex()
+coin_w()
