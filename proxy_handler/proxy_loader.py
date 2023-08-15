@@ -1,8 +1,4 @@
-import asyncio
 import os
-import ssl
-
-import aiohttp
 import requests
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -10,15 +6,6 @@ file_path = os.path.join(dir_path, 'proxy_http_ip.txt')
 
 
 def load_proxies_from_file():
-    """
-    Load proxies from a given file and return as a list.
-
-    Args:
-    - filepath (str): The path to the proxy list file.
-
-    Returns:
-    - List[str]: A list of proxy strings.
-    """
     with open(file_path, 'r') as file:
         return [line.strip() for line in file.readlines()]
 
@@ -38,7 +25,7 @@ def load_proxies_from_file():
 #         print(f"Received unexpected status code {response.status_code}.")
 # except requests.RequestException as e:
 #     print(f"Error using proxy: {e}")
-
+#
 # username = "DEO06D7RI"
 # password = "j8oq7wya"
 #
@@ -52,9 +39,4 @@ def load_proxies_from_file():
 #         f.write(proxy + "\n")
 #
 # print("Format conversion complete!")
-
-
-
-
-
 
