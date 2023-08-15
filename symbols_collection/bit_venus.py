@@ -43,7 +43,6 @@ def transform_and_filter_symbols(data, ref):
             if symbol.endswith(match):
                 base_symbols.add(str(symbol[:-len(match)]))
 
-
     for base_currency in base_symbols:
         found = False
         for ref_currency in ref:
