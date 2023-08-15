@@ -23,7 +23,7 @@ def insert_to_db(data, ref):
     filtered_symbols = transform_and_filter_symbols(data, ref)
 
     inst_ids_tuples = [(inst_id,) for inst_id in filtered_symbols]
-    sql = "INSERT INTO symbols (coin_name, remark) VALUES (%s, 'mexc')"
+    sql = "INSERT INTO symbols (symbol_name, remark) VALUES (%s, 'mexc')"
 
     cursor.executemany(sql, inst_ids_tuples)
 
@@ -69,6 +69,3 @@ def transform_and_filter_symbols(data, ref):
     print(f"base_symbols :          {len(base_symbols)}")
     print(f"transformed_symbols :   {len(transformed_symbols)}")
     return transformed_symbols
-
-
-mexc()
