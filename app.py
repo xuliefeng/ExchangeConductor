@@ -6,6 +6,7 @@ from flask_cors import CORS
 from data_collection.bit_get_collector import bit_get
 from data_collection.bit_venus_collector import bit_venus
 from data_collection.bitfinex_collector import bitfinex
+from data_collection.deep_coin_collector import deep_coin
 from data_collection.huobi_collector import huobi
 from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
@@ -34,7 +35,8 @@ def test():
     # bitfinex(symbols, reference)
     # bit_get(symbols, reference)
     # mexc(symbols, reference)
-    bit_venus(symbols, reference)
+    # bit_venus(symbols, reference)
+    deep_coin(symbols)
     return "1", 200
 
 
