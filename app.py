@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from flask import Flask
 from flask_cors import CORS
 
+from data_collection.ascend_ex_collector import ascend_ex
 from data_collection.bit_get_collector import bit_get
 from data_collection.bit_venus_collector import bit_venus
 from data_collection.bitfinex_collector import bitfinex
@@ -36,7 +37,8 @@ def test():
     # bit_get(symbols, reference)
     # mexc(symbols, reference)
     # bit_venus(symbols, reference)
-    deep_coin(symbols)
+    # deep_coin(symbols)
+    ascend_ex(symbols)
     return "1", 200
 
 
