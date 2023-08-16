@@ -11,6 +11,7 @@ def filter_symbols(symbols, data):
             found_records.append([item for item in data if item['instId'] == symbol][0])
             # print(f"Data found for stable coin: {combined_id} in okx")
 
+    print(f"okx - symbols      : {len(data)}")
     print(f"okx - symbols found: {len(found_records)}")
     return found_records
 
@@ -21,7 +22,7 @@ def insert_to_db(data):
 
     query = """
         INSERT INTO trade_data (
-            coin_name, bid, bid_size, ask, ask_size, last, last_size, update_time, exchange_name
+            symbol_name, bid, bid_size, ask, ask_size, last, last_size, update_time, exchange_name
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'okx');
     """
 

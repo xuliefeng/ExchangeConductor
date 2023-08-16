@@ -9,6 +9,8 @@ def filter_symbols(symbols, data):
         symbol = str(symbol).replace('-', '_')
         if symbol in inst_ids_set:
             found_records.append(symbol)
+
+    print(f"gate_io - symbols      : {len(data)}")
     print(f"gate_io - symbols found: {len(found_records)}")
     return found_records
 
@@ -19,7 +21,7 @@ def insert_to_db(data):
 
     query = """
         INSERT INTO trade_data (
-            coin_name, ask, ask_size, bid, bid_size, update_time, exchange_name
+            symbol_name, ask, ask_size, bid, bid_size, update_time, exchange_name
         ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'gate_io');
     """
 

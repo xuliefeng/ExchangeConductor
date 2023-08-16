@@ -7,11 +7,11 @@ def filter_symbols(symbols, data):
     inst_ids_set = set(item['symbol'] for item in data)
 
     for symbol in symbols:
-        s, r = str(symbol).split('-')
-        combined_id = f"{str(s).lower()}{str(r).lower()}"
+        combined_id = str(symbol).replace('-', '').lower()
         if combined_id in inst_ids_set:
             found_records.append([item for item in data if item['symbol'] == combined_id][0])
 
+    print(f"huobi - symbols      : {len(data)}")
     print(f"huobi - symbols found: {len(found_records)}")
     return found_records
 
@@ -25,7 +25,7 @@ def insert_to_db(found_records, reference):
 
     query = """
         INSERT INTO trade_data (
-            coin_name, bid, bid_size, ask, ask_size, update_time, exchange_name
+            symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
         ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'huobi');
     """
 
