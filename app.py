@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 from data_collection.ascend_ex_collector import ascend_ex
 from data_collection.bit_get_collector import bit_get
+from data_collection.bit_mark_collector import bit_mark
 from data_collection.bit_venus_collector import bit_venus
 from data_collection.bitfinex_collector import bitfinex
 from data_collection.bybit_collector import bybit
@@ -44,7 +45,8 @@ def test():
     # ascend_ex(symbols)
     # bybit(symbols, reference)
     # xt(symbols)
-    hitbtc(symbols, reference)
+    # hitbtc(symbols, reference)
+    bit_mark(symbols)
     return "1", 200
 
 
