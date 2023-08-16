@@ -19,7 +19,6 @@ def execute_in_parallel(symbols, reference):
             executor.submit(okx, symbols),
             executor.submit(huobi, symbols, reference),
             # executor.submit(gate_io, symbols)
-            # kraken(symbols, reference)
 
         ]
         wait(futures)
@@ -32,7 +31,6 @@ def test():
     # okx(symbols)
     # huobi(symbols, reference)
     # gate_io(symbols)
-    kraken(symbols, reference)
     return "1", 200
 
 
