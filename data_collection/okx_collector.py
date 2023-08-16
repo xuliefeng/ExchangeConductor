@@ -3,8 +3,7 @@ import time
 import requests
 
 from config.logger_config import setup_logger
-from data_processing import okx_processor as okx_module
-from data_processing.okx_processor import filter_symbols
+from data_processing.okx_processor import filter_symbols, insert_to_db
 
 logger = setup_logger("okx_collector", "log/app.log")
 
@@ -18,7 +17,7 @@ def okx(symbols):
         data = response.json()
         data = data['data']
         found_records = filter_symbols(symbols, data)
-        okx_module.insert_to_db(found_records)
+        insert_to_db(found_records)
     else:
         logger.error(f"Request failed with status code {response.status_code}")
 

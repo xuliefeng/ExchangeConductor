@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from flask import Flask
 from flask_cors import CORS
 
+from data_collection.bitfinex_collector import bitfinex
 from data_collection.huobi_collector import huobi
 from data_collection.okx_collector import okx
 from database.db_service import get_symbols
@@ -25,8 +26,9 @@ def execute_in_parallel(symbols, reference):
 def test():
     symbols, reference = get_symbols()
     # execute_in_parallel(symbols, reference)
-    okx(symbols)
-    huobi(symbols, reference)
+    # okx(symbols)
+    # huobi(symbols, reference)
+    # bitfinex(symbols, reference)
     return "1", 200
 
 

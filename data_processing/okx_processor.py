@@ -25,8 +25,8 @@ def insert_to_db(data):
 
     query = """
         INSERT INTO trade_data (
-            symbol_name, bid, bid_size, ask, ask_size, last, last_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'okx');
+            symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
+        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'okx');
     """
 
     batch_size = 1000
@@ -38,9 +38,7 @@ def insert_to_db(data):
                 record['bidPx'],
                 record['bidSz'],
                 record['askPx'],
-                record['askSz'],
-                record['last'],
-                record['lastSz'],
+                record['askSz']
             ) for record in batch
         ]
 
