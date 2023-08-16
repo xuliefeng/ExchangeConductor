@@ -1,9 +1,11 @@
 import requests
 
+from config.logger_config import setup_logger
 from database.db_pool import get_connection, release_connection
 from database.db_service import get_symbols
 
 symbols, reference = get_symbols()
+logger = setup_logger("hot_coin", "../log/app.log")
 
 
 def hot_coin():
@@ -15,7 +17,7 @@ def hot_coin():
         data = data['ticker']
         insert_to_db(data, reference)
     else:
-        print(f"Request failed with status code {response.status_code}")
+        logger.error(f"Request failed with status code {response.status_code}")
 
 
 def insert_to_db(data, ref):
@@ -31,7 +33,7 @@ def insert_to_db(data, ref):
 
     connection.commit()
     release_connection(connection)
-    print(f"{len(filtered_symbols)} record(s) inserted hot_coin")
+    logger.info(f"{len(filtered_symbols)} record(s) inserted hot_coin")
 
 
 def transform_and_filter_symbols(data, ref):
@@ -56,7 +58,7 @@ def transform_and_filter_symbols(data, ref):
             unmatched_symbols.append(base_currency)
 
     for unmatched in unmatched_symbols:
-        print(f"hot_coin_unmatched_symbols : {unmatched}")
+        logger.info(f"hot_coin_unmatched_symbols : {unmatched}")
 
     with open('hot_coin_unmatched_symbols.txt', 'w') as file:
         for unmatched in unmatched_symbols:
@@ -65,7 +67,7 @@ def transform_and_filter_symbols(data, ref):
         file.write(f"base_symbols :          {len(base_symbols)}" + '\n')
         file.write(f"transformed_symbols :   {len(transformed_symbols)}" + '\n')
 
-    print(f"symbols :               {len(data)}")
-    print(f"base_symbols :          {len(base_symbols)}")
-    print(f"transformed_symbols :   {len(transformed_symbols)}")
+    logger.info(f"symbols :               {len(data)}")
+    logger.info(f"base_symbols :          {len(base_symbols)}")
+    logger.info(f"transformed_symbols :   {len(transformed_symbols)}")
     return transformed_symbols
