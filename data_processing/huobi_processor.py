@@ -14,8 +14,8 @@ def filter_symbols(symbols, data):
         if combined_id in inst_ids_set:
             found_records.append([item for item in data if item['symbol'] == combined_id][0])
 
-    logger.info(f"huobi - symbols      : {len(data)}")
-    logger.info(f"huobi - symbols found: {len(found_records)}")
+    logger.info(f"huobi - symbols       : {len(data)}")
+    logger.info(f"huobi - symbols found : {len(found_records)}")
     return found_records
 
 

@@ -13,8 +13,8 @@ def filter_symbols(symbols, data):
         if symbol in inst_ids_set:
             found_records.append(symbol)
 
-    logger.info(f"gate_io - symbols      : {len(data)}")
-    logger.info(f"gate_io - symbols found: {len(found_records)}")
+    logger.info(f"gate_io - symbols       : {len(data)}")
+    logger.info(f"gate_io - symbols found : {len(found_records)}")
     return found_records
 
 
