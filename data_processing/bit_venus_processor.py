@@ -29,7 +29,7 @@ def insert_to_db(found_records, reference):
     query = """
         INSERT INTO trade_data (
             symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'bit_venus');
+        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'bitvenus');
     """
 
     batch_size = 1000

@@ -25,7 +25,7 @@ def insert_to_db(found_records):
     query = """
         INSERT INTO trade_data (
             symbol_name, ask, ask_size, bid, bid_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'gate_io');
+        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'gateio');
     """
 
     records_to_insert = []
