@@ -6,6 +6,7 @@ from flask_cors import CORS
 from data_collection.bit_get_collector import bit_get
 from data_collection.bitfinex_collector import bitfinex
 from data_collection.huobi_collector import huobi
+from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
 from database.db_service import get_symbols
 
@@ -30,7 +31,8 @@ def test():
     # okx(symbols)
     # huobi(symbols, reference)
     # bitfinex(symbols, reference)
-    bit_get(symbols, reference)
+    # bit_get(symbols, reference)
+    mexc(symbols, reference)
     return "1", 200
 
 
