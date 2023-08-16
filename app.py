@@ -13,6 +13,7 @@ from data_collection.bybit_collector import bybit
 from data_collection.deep_coin_collector import deep_coin
 from data_collection.hitbtc_collector import hitbtc
 from data_collection.huobi_collector import huobi
+from data_collection.jubi_collector import jubi
 from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
 from data_collection.xt_collector import xt
@@ -48,7 +49,8 @@ def test():
     # xt(symbols)
     # hitbtc(symbols, reference)
     # bit_mark(symbols)
-    bigone(symbols)
+    # bigone(symbols)
+    jubi(symbols, reference)
     return "1", 200
 
 
