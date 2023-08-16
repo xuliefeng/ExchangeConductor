@@ -12,6 +12,7 @@ from data_collection.deep_coin_collector import deep_coin
 from data_collection.huobi_collector import huobi
 from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
+from data_collection.xt_collector import xt
 from database.db_service import get_symbols
 
 app = Flask(__name__)
@@ -40,9 +41,9 @@ def test():
     # bit_venus(symbols, reference)
     # deep_coin(symbols)
     # ascend_ex(symbols)
-    bybit(symbols, reference)
+    # bybit(symbols, reference)
+    xt(symbols)
     return "1", 200
-
 
 
 if __name__ == "__main__":
