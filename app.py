@@ -27,9 +27,9 @@ def execute_in_parallel(symbols, reference):
 def test():
     symbols, reference = get_symbols()
     # execute_in_parallel(symbols, reference)
-    # okx(symbols)
-    # huobi(symbols, reference)
-    # gate_io(symbols)
+    okx(symbols)
+    huobi(symbols, reference)
+    gate_io(symbols)
     return "1", 200
 
 

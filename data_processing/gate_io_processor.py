@@ -1,4 +1,7 @@
+from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
+
+logger = setup_logger("gate_io_processor", "log/app.log")
 
 
 def filter_symbols(symbols, data):
@@ -10,8 +13,8 @@ def filter_symbols(symbols, data):
         if symbol in inst_ids_set:
             found_records.append(symbol)
 
-    print(f"gate_io - symbols      : {len(data)}")
-    print(f"gate_io - symbols found: {len(found_records)}")
+    logger.info(f"gate_io - symbols      : {len(data)}")
+    logger.info(f"gate_io - symbols found: {len(found_records)}")
     return found_records
 
 
@@ -47,4 +50,3 @@ def insert_to_db(data):
         connection.commit()
 
     release_connection(connection)
-

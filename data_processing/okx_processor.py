@@ -1,4 +1,7 @@
+from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
+
+logger = setup_logger("okx_processor", "log/app.log")
 
 
 def filter_symbols(symbols, data):
@@ -9,10 +12,10 @@ def filter_symbols(symbols, data):
     for symbol in symbols:
         if symbol in inst_ids_set:
             found_records.append([item for item in data if item['instId'] == symbol][0])
-            # print(f"Data found for stable coin: {combined_id} in okx")
+            # logger.info(f"Data found for stable coin: {combined_id} in okx")
 
-    print(f"okx - symbols      : {len(data)}")
-    print(f"okx - symbols found: {len(found_records)}")
+    logger.info(f"okx - symbols      : {len(data)}")
+    logger.info(f"okx - symbols found: {len(found_records)}")
     return found_records
 
 

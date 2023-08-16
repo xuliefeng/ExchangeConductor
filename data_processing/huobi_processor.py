@@ -1,4 +1,7 @@
+from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
+
+logger = setup_logger("huobi_processor", "log/app.log")
 
 
 def filter_symbols(symbols, data):
@@ -11,8 +14,8 @@ def filter_symbols(symbols, data):
         if combined_id in inst_ids_set:
             found_records.append([item for item in data if item['symbol'] == combined_id][0])
 
-    print(f"huobi - symbols      : {len(data)}")
-    print(f"huobi - symbols found: {len(found_records)}")
+    logger.info(f"huobi - symbols      : {len(data)}")
+    logger.info(f"huobi - symbols found: {len(found_records)}")
     return found_records
 
 

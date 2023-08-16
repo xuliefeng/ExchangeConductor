@@ -2,10 +2,14 @@ import asyncio
 import random
 import time
 import httpx
+
+from config.logger_config import setup_logger
 from data_processing.gate_io_processor import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import load_proxies_from_file
 
 proxies = load_proxies_from_file()
+
+logger = setup_logger("gate_io_collector", "log/app.log")
 
 
 def select_proxy():
@@ -21,13 +25,11 @@ def gate_io(symbols):
         result = asyncio.run(gate_io_depth(found_records))
         insert_to_db(result)
     else:
-        print("Failed to get tickers from gate_io")
+        logger.error("Failed to get tickers from gate_io")
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    print(
-        f"---------------------------------------------------------------------------------------------------- gate_io executed in {elapsed_time} seconds."
-    )
+    logger.info(f"-------------------------------------------------- gate_io executed in {elapsed_time} seconds.")
 
 
 async def gate_io_tickers(url, proxy):
@@ -50,5 +52,5 @@ async def fetch(symbol, url):
         if response.status_code == 200:
             return symbol, response.json()
         else:
-            print(f"Request failed {symbol} status code {response.status_code} - gate_io")
+            logger.info(f"Request failed {symbol} status code {response.status_code} - gate_io")
             return symbol, None
