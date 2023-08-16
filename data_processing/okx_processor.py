@@ -12,7 +12,6 @@ def filter_symbols(symbols, data):
     for symbol in symbols:
         if symbol in inst_ids_set:
             found_records.append([item for item in data if item['instId'] == symbol][0])
-            # logger.info(f"Data found for stable coin: {combined_id} in okx")
 
     logger.info(f"okx - symbols      : {len(data)}")
     logger.info(f"okx - symbols found: {len(found_records)}")
