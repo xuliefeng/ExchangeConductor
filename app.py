@@ -9,6 +9,7 @@ from data_collection.bit_venus_collector import bit_venus
 from data_collection.bitfinex_collector import bitfinex
 from data_collection.bybit_collector import bybit
 from data_collection.deep_coin_collector import deep_coin
+from data_collection.hitbtc_collector import hitbtc
 from data_collection.huobi_collector import huobi
 from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
@@ -42,7 +43,8 @@ def test():
     # deep_coin(symbols)
     # ascend_ex(symbols)
     # bybit(symbols, reference)
-    xt(symbols)
+    # xt(symbols)
+    hitbtc(symbols, reference)
     return "1", 200
 
 
