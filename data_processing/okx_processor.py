@@ -18,7 +18,7 @@ def filter_symbols(symbols, data):
     return found_records
 
 
-def insert_to_db(data):
+def insert_to_db(found_records):
     connection = get_connection()
     cursor = connection.cursor()
 
@@ -29,8 +29,8 @@ def insert_to_db(data):
     """
 
     batch_size = 1000
-    for i in range(0, len(data), batch_size):
-        batch = data[i:i + batch_size]
+    for i in range(0, len(found_records), batch_size):
+        batch = found_records[i:i + batch_size]
         records_to_insert = [
             (
                 record['instId'],

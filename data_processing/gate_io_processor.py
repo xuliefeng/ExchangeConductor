@@ -18,7 +18,7 @@ def filter_symbols(symbols, data):
     return found_records
 
 
-def insert_to_db(data):
+def insert_to_db(found_records):
     connection = get_connection()
     cursor = connection.cursor()
 
@@ -29,7 +29,7 @@ def insert_to_db(data):
     """
 
     records_to_insert = []
-    for symbol, result in data.items():
+    for symbol, result in found_records.items():
         symbol = symbol.replace("_", "-")
         ask_price, ask_size = result['asks'][0]
         bid_price, bid_size = result['bids'][0]
