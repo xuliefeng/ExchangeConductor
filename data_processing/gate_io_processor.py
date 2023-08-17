@@ -18,12 +18,12 @@ def filter_symbols(symbols, data):
     return found_records
 
 
-def insert_to_db(found_records):
+def insert_to_db(found_records, temp_table_name):
     connection = get_connection()
     cursor = connection.cursor()
 
-    query = """
-        INSERT INTO trade_data (
+    query = f"""
+        INSERT INTO {temp_table_name} (
             symbol_name, ask, ask_size, bid, bid_size, update_time, exchange_name
         ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'gateio');
     """

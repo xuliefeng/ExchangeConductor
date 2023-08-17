@@ -19,15 +19,15 @@ def filter_symbols(symbols, data):
     return found_records
 
 
-def insert_to_db(found_records, reference):
+def insert_to_db(found_records, reference, temp_table_name):
     connection = get_connection()
     cursor = connection.cursor()
 
     for item in found_records:
         item['symbol'] = transform_symbol(item['symbol'], reference)
 
-    query = """
-        INSERT INTO trade_data (
+    query = f"""
+        INSERT INTO {temp_table_name} (
             symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
         ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'bybit');
     """

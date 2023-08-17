@@ -8,7 +8,7 @@ from data_processing.deep_coin_processor import filter_symbols, insert_to_db
 logger = setup_logger("deep_coin_collector", "log/app.log")
 
 
-def deep_coin(symbols):
+def deep_coin(symbols, temp_table_name):
     start_time = time.time()
     url = "https://api.deepcoin.com/deepcoin/market/tickers?instType=SPOT"
     response = requests.get(url)
@@ -17,7 +17,7 @@ def deep_coin(symbols):
         data = response.json()
         data = data['data']
         found_records = filter_symbols(symbols, data)
-        insert_to_db(found_records)
+        insert_to_db(found_records, temp_table_name)
     else:
         logger.error(f"Request failed with status code {response.status_code}")
 

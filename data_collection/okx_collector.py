@@ -8,7 +8,7 @@ from data_processing.okx_processor import filter_symbols, insert_to_db
 logger = setup_logger("okx_collector", "log/app.log")
 
 
-def okx(symbols):
+def okx(symbols, temp_table_name):
     start_time = time.time()
     url = "https://www.okx.com/api/v5/market/tickers?instType=SPOT"
     response = requests.get(url)
@@ -17,7 +17,7 @@ def okx(symbols):
         data = response.json()
         data = data['data']
         found_records = filter_symbols(symbols, data)
-        insert_to_db(found_records)
+        insert_to_db(found_records, temp_table_name)
     else:
         logger.error(f"Request failed with status code {response.status_code}")
 

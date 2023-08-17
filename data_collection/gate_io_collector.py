@@ -16,14 +16,14 @@ def select_proxy():
     return random.choice(proxies)
 
 
-def gate_io(symbols):
+def gate_io(symbols, temp_table_name):
     start_time = time.time()
     url = "https://api.gateio.ws/api/v4/spot/tickers"
     data = asyncio.run(gate_io_tickers(url, select_proxy()))
     if data:
         found_records = filter_symbols(symbols, data)
         result = asyncio.run(gate_io_depth(found_records))
-        insert_to_db(result)
+        insert_to_db(result, temp_table_name)
     else:
         logger.error("Failed to get tickers from gate_io")
 

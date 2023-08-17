@@ -19,7 +19,7 @@ def filter_symbols(symbols, data):
     return found_records
 
 
-def insert_to_db(found_records, reference):
+def insert_to_db(found_records, reference, temp_table_name):
     connection = get_connection()
     cursor = connection.cursor()
 
@@ -28,8 +28,8 @@ def insert_to_db(found_records, reference):
         transformed_key = transform_symbol(key, reference)
         item[transformed_key] = item.pop(key)
 
-    query = """
-        INSERT INTO trade_data (
+    query = f"""
+        INSERT INTO {temp_table_name} (
             symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
         ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'hitbtc');
     """
