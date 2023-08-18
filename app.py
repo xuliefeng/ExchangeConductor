@@ -22,35 +22,48 @@ from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
 from data_collection.xt_collector import xt
 from database.db_service import get_symbols, create_temp_table, delete_temp_table
-from web_interaction.exchange import exchange_list, update_status
+from web_interaction.exchange import exchange_list, update_status, exchange_list_used
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 
 app = Flask(__name__)
 CORS(app)
 logger = setup_logger("app", "log/app.log")
 
+exchange_functions = {
+    "okx": okx,
+    "huobi": huobi,
+    "bitfinex": bitfinex,
+    "bitget": bit_get,
+    "mexc": mexc,
+    "bitvenus": bit_venus,
+    "deepcoin": deep_coin,
+    "ascend_ex": ascend_ex,
+    "bybit": bybit,
+    "xt": xt,
+    "hitbtc": hitbtc,
+    "bitmark": bit_mark,
+    "bigone": bigone,
+    "jubi": jubi,
+    "binance": binance,
+}
 
-def execute_in_parallel(symbols, reference, temp_table_name):
+special_exchanges = ['okx', 'deep_coin', 'ascend_ex', 'xt', 'bit_mark', 'bigone']
+
+
+def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
     start_time = time.time()
 
     with ThreadPoolExecutor() as executor:
-        futures = [
-            executor.submit(okx, symbols, temp_table_name),
-            executor.submit(huobi, symbols, reference, temp_table_name),
-            executor.submit(bitfinex, symbols, reference, temp_table_name),
-            executor.submit(bit_get, symbols, reference, temp_table_name),
-            # executor.submit(mexc, symbols, reference, temp_table_name),
-            executor.submit(bit_venus, symbols, reference, temp_table_name),
-            executor.submit(deep_coin, symbols, temp_table_name),
-            executor.submit(ascend_ex, symbols, temp_table_name),
-            # executor.submit(bybit, symbols, reference, temp_table_name),
-            executor.submit(xt, symbols, temp_table_name),
-            executor.submit(hitbtc, symbols, reference, temp_table_name),
-            executor.submit(bit_mark, symbols, temp_table_name),
-            executor.submit(bigone, symbols, temp_table_name),
-            executor.submit(jubi, symbols, reference, temp_table_name),
-            # executor.submit(binance, symbols, reference, temp_table_name)
-        ]
+        futures = []
+        for item in exchanges:
+            exchange_name = item[1]
+            if exchange_name in exchange_functions:
+                if exchange_name in special_exchanges:
+                    futures.append(executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
+                else:
+                    futures.append(
+                        executor.submit(exchange_functions[exchange_name], symbols, reference, temp_table_name))
+
         wait(futures)
 
     end_time = time.time()
@@ -82,8 +95,9 @@ def test():
 @app.route('/api/get-analysis-data', methods=['GET'])
 def get_analysis_data():
     symbols, reference = get_symbols()
+    exchanges = exchange_list_used()
     temp_table_name = create_temp_table()
-    execute_in_parallel(symbols, reference, temp_table_name)
+    execute_in_parallel(symbols, reference, temp_table_name, exchanges)
     data = fetch_combined_analysis_data(temp_table_name)
     delete_temp_table(temp_table_name)
     return jsonify(data)
