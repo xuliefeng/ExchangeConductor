@@ -52,7 +52,6 @@ special_exchanges = ['okx', 'deep_coin', 'ascend_ex', 'xt', 'bit_mark', 'bigone'
 
 def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
     start_time = time.time()
-
     with ThreadPoolExecutor() as executor:
         futures = []
         for item in exchanges:
@@ -63,7 +62,6 @@ def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
                 else:
                     futures.append(
                         executor.submit(exchange_functions[exchange_name], symbols, reference, temp_table_name))
-
         wait(futures)
 
     end_time = time.time()

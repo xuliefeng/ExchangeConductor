@@ -8,7 +8,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 config_path = os.path.join(dir_path, '../config/config.yml')
 
 
-def create_connection_pool(min_conn=5, max_conn=10):
+def create_connection_pool(min_conn=5, max_conn=50):
     with open(config_path, 'r') as file:
         config = yaml.safe_load(file)['database']
 
