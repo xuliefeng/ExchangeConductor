@@ -19,7 +19,7 @@ def fetch_combined_analysis_data(temp_table_name):
             a.exchange_name AS min_ask_exchange,
             CASE 
                 WHEN a.ask = 0 THEN NULL
-                ELSE ROUND((((b.bid - a.ask) / a.ask) * 100 * 1000000)) / 1000000
+                ELSE ROUND((((b.bid - a.ask) / a.ask) * 100 * 10)) / 10
             END AS price_diff_percentage,
             ROW_NUMBER() OVER(PARTITION BY b.symbol_name ORDER BY 
                 CASE 

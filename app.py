@@ -1,7 +1,7 @@
 import time
 from concurrent.futures import ThreadPoolExecutor, wait
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from config.logger_config import setup_logger
@@ -22,6 +22,8 @@ from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
 from data_collection.xt_collector import xt
 from database.db_service import get_symbols, create_temp_table, delete_temp_table
+from web_interaction.exchange import exchange_list, update_status
+from web_interaction.symbol import symbol_list, delete_record, insert_record
 
 app = Flask(__name__)
 CORS(app)
@@ -37,17 +39,17 @@ def execute_in_parallel(symbols, reference, temp_table_name):
             executor.submit(huobi, symbols, reference, temp_table_name),
             executor.submit(bitfinex, symbols, reference, temp_table_name),
             executor.submit(bit_get, symbols, reference, temp_table_name),
-            executor.submit(mexc, symbols, reference, temp_table_name),
+            # executor.submit(mexc, symbols, reference, temp_table_name),
             executor.submit(bit_venus, symbols, reference, temp_table_name),
             executor.submit(deep_coin, symbols, temp_table_name),
             executor.submit(ascend_ex, symbols, temp_table_name),
-            executor.submit(bybit, symbols, reference, temp_table_name),
+            # executor.submit(bybit, symbols, reference, temp_table_name),
             executor.submit(xt, symbols, temp_table_name),
             executor.submit(hitbtc, symbols, reference, temp_table_name),
             executor.submit(bit_mark, symbols, temp_table_name),
             executor.submit(bigone, symbols, temp_table_name),
             executor.submit(jubi, symbols, reference, temp_table_name),
-            executor.submit(binance, symbols, reference, temp_table_name)
+            # executor.submit(binance, symbols, reference, temp_table_name)
         ]
         wait(futures)
 
@@ -85,6 +87,43 @@ def get_analysis_data():
     data = fetch_combined_analysis_data(temp_table_name)
     delete_temp_table(temp_table_name)
     return jsonify(data)
+
+
+@app.route('/api/get-exchange-list', methods=['GET'])
+def get_exchange_list():
+    data = exchange_list()
+    return jsonify(data)
+
+
+@app.route('/api/update-exchange-status', methods=['POST'])
+def update_exchange_status():
+    data = request.json
+    exchange_id = data['exchangeId']
+    status = data['status']
+    update_status(exchange_id, status)
+    return "Success", 200
+
+
+@app.route('/api/get-symbol-list', methods=['GET'])
+def get_symbol_list():
+    data = symbol_list()
+    return jsonify(data)
+
+
+@app.route('/api/delete-symbol', methods=['POST'])
+def delete_symbol():
+    data = request.json
+    symbol_id = data['symbolId']
+    delete_record(symbol_id)
+    return "Success", 200
+
+
+@app.route('/api/add-symbol', methods=['POST'])
+def add_symbol():
+    data = request.json
+    symbol_name = data['symbolName']
+    insert_record(symbol_name)
+    return "Success", 200
 
 
 if __name__ == "__main__":
