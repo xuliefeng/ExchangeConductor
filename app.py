@@ -21,7 +21,8 @@ from data_collection.jubi_collector import jubi
 from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
 from data_collection.xt_collector import xt
-from database.db_service import get_symbols, create_temp_table, delete_temp_table
+from database.db_service import get_symbols, create_temp_table, delete_temp_table, get_reference_price, \
+    get_usd_to_cny_rate
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 
@@ -53,6 +54,8 @@ special_exchanges = ['okx', 'deepcoin', 'ascendex', 'xt', 'bitmark', 'bigone']
 def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
     start_time = time.time()
     with ThreadPoolExecutor() as executor:
+        executor.submit(get_reference_price)
+        executor.submit(get_usd_to_cny_rate)
         futures = []
         for item in exchanges:
             exchange_name = item[1]
