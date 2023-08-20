@@ -1,4 +1,4 @@
-import os
+# import os
 
 from symbols_collection.ascend_ex import ascend_ex
 from symbols_collection.bi_ka import bi_ka
@@ -24,34 +24,34 @@ from symbols_collection.okx import okx
 from symbols_collection.poloniex import poloniex
 from symbols_collection.xt import xt
 
-okx()
-huobi()
-gate_io()
-bitfinex()
-coin_w()
-bit_get()
-mexc()
-bit_venus()
-bi_ka()
-deep_coin()
-hot_coin()
-ascend_ex()
-poloniex()
-bybit()
-xt()
-hitbtc()
-digi_finex()
-bit_mart()
-bigone()
-coin_tiger()
-l_bank()
-jubi()
-binance()
+# okx()
+# huobi()
+# gate_io()
+# bitfinex()
+# coin_w()
+# bit_get()
+# mexc()
+# bit_venus()
+# bi_ka()
+# deep_coin()
+# hot_coin()
+# ascend_ex()
+# poloniex()
+# bybit()
+# xt()
+# hitbtc()
+# digi_finex()
+# bit_mart()
+# bigone()
+# coin_tiger()
+# l_bank()
+# jubi()
+# binance()
 
-current_directory = os.getcwd()
-all_files = os.listdir(current_directory)
-for file_name in all_files:
-    if file_name.endswith('.txt'):
-        os.remove(os.path.join(current_directory, file_name))
-print("done")
+# current_directory = os.getcwd()
+# all_files = os.listdir(current_directory)
+# for file_name in all_files:
+#     if file_name.endswith('.txt'):
+#         os.remove(os.path.join(current_directory, file_name))
+# print("done")
 # print(os.cpu_count())

@@ -37,7 +37,7 @@ exchange_functions = {
     "mexc": mexc,
     "bitvenus": bit_venus,
     "deepcoin": deep_coin,
-    "ascend_ex": ascend_ex,
+    "ascendex": ascend_ex,
     "bybit": bybit,
     "xt": xt,
     "hitbtc": hitbtc,
@@ -47,7 +47,7 @@ exchange_functions = {
     "binance": binance,
 }
 
-special_exchanges = ['okx', 'deep_coin', 'ascend_ex', 'xt', 'bit_mark', 'bigone']
+special_exchanges = ['okx', 'deepcoin', 'ascendex', 'xt', 'bitmark', 'bigone']
 
 
 def execute_in_parallel(symbols, reference, temp_table_name, exchanges):

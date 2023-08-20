@@ -42,7 +42,7 @@ def fetch_combined_analysis_data(temp_table_name):
         bid_size
     FROM Combined
     WHERE price_diff_percentage is not null
-    and rn = 1 
+--     and rn = 1 
     ORDER BY price_diff_percentage DESC;
     """
 
