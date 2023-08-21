@@ -6,6 +6,7 @@ from flask import jsonify
 
 from config.logger_config import setup_logger
 from database.db_pool import get_connection, release_connection
+
 logger = setup_logger("db_service", "log/app.log")
 
 
@@ -93,7 +94,9 @@ def get_reference_price():
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- get_reference_price executed in {elapsed_time} seconds.")
+    logger.info(
+        f"-------------------------------------------------- get_reference_price executed in {elapsed_time} seconds.")
+
 
 def get_usd_to_cny_rate():
     start_time = time.time()
@@ -118,4 +121,5 @@ def get_usd_to_cny_rate():
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- get_usd_to_cny_rate executed in {elapsed_time} seconds.")
+    logger.info(
+        f"-------------------------------------------------- get_usd_to_cny_rate executed in {elapsed_time} seconds.")

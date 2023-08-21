@@ -2,7 +2,7 @@ import uuid
 
 from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
-
+from mytools.time_util import get_current_time
 logger = setup_logger("gate_io_processor", "log/app.log")
 
 
@@ -21,13 +21,14 @@ def filter_symbols(symbols, data):
 
 
 def insert_to_db(found_records, temp_table_name):
+    current_time = get_current_time()
     connection = get_connection()
     cursor = connection.cursor()
 
     query_temp_table = f"""
         INSERT INTO {temp_table_name} (
             symbol_id, symbol_name, ask, bid, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP, 'gateio');
+        ) VALUES (%s, %s, %s, %s, '{current_time}', 'gateio');
     """
 
     query_temp_table_depth = f"""
