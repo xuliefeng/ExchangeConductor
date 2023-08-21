@@ -4,7 +4,7 @@ import time
 import httpx
 
 from config.logger_config import setup_logger
-from data_processing.gate_io_processor import filter_symbols, insert_to_db
+from data_processing_depth.gate_io_processor import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import load_proxies_from_file
 
 proxies = load_proxies_from_file()

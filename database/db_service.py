@@ -25,15 +25,15 @@ def get_symbols():
 
 
 def create_temp_table():
-    temp_table_name = "temp_" + str(uuid.uuid4()).replace("-", "_")
-
     connection = get_connection()
     cursor = connection.cursor()
 
-    create_table_query = f"""
-    CREATE TABLE {temp_table_name} AS SELECT * FROM trade_data;
-    """
-    cursor.execute(create_table_query)
+    temp_table_name = "temp_" + str(uuid.uuid4()).replace("-", "_")
+    create_table = f"""CREATE TABLE {temp_table_name} AS SELECT * FROM trade_data;"""
+    create_table_depth = f"""CREATE TABLE {temp_table_name + '_depth'} AS SELECT * FROM trade_data_depth;"""
+
+    cursor.execute(create_table)
+    cursor.execute(create_table_depth)
     connection.commit()
     cursor.close()
     connection.close()

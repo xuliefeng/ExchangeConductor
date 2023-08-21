@@ -21,6 +21,7 @@ from data_collection.jubi_collector import jubi
 from data_collection.mexc_collector import mexc
 from data_collection.okx_collector import okx
 from data_collection.xt_collector import xt
+from data_collection_depth.gate_io_collector import gate_io
 from database.db_service import get_symbols, create_temp_table, delete_temp_table, get_reference_price, \
     get_usd_to_cny_rate
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
@@ -54,17 +55,15 @@ special_exchanges = ['okx', 'deepcoin', 'ascendex', 'xt', 'bitmark', 'bigone']
 def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
     start_time = time.time()
     with ThreadPoolExecutor() as executor:
-        executor.submit(get_reference_price)
-        executor.submit(get_usd_to_cny_rate)
-        futures = []
+
+        futures = [executor.submit(get_reference_price), executor.submit(get_usd_to_cny_rate)]
         for item in exchanges:
             exchange_name = item[1]
             if exchange_name in exchange_functions:
                 if exchange_name in special_exchanges:
                     futures.append(executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
                 else:
-                    futures.append(
-                        executor.submit(exchange_functions[exchange_name], symbols, reference, temp_table_name))
+                    futures.append(executor.submit(exchange_functions[exchange_name], symbols, reference, temp_table_name))
         wait(futures)
 
     end_time = time.time()
@@ -74,7 +73,9 @@ def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
 
 @app.route("/api/get", methods=["GET"])
 def test():
-    # symbols, reference = get_symbols()
+    symbols, reference = get_symbols()
+    temp_table_name = create_temp_table()
+
     # okx(symbols)
     # huobi(symbols, reference)
     # bitfinex(symbols, reference)
@@ -90,6 +91,7 @@ def test():
     # bigone(symbols)
     # jubi(symbols, reference)
     # binance(symbols, reference)
+    gate_io(symbols, temp_table_name)
     return "Success", 200
 
 
