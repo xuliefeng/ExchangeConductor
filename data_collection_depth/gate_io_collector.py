@@ -39,7 +39,7 @@ async def gate_io_tickers(url, proxy):
 
 
 async def gate_io_depth(found_records):
-    url = "https://api.gateio.ws/api/v4/spot/order_book?currency_pair="
+    url = "https://api.gateio.ws/api/v4/spot/order_book?limit=10&currency_pair="
     tasks = [fetch(symbol, url) for symbol in found_records]
     results = await asyncio.gather(*tasks)
     return {symbol: result for symbol, result in results if result}
