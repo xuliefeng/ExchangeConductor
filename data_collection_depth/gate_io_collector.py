@@ -18,8 +18,7 @@ def select_proxy():
 
 def gate_io(symbols, temp_table_name):
     start_time = time.time()
-    url = "https://api.gateio.ws/api/v4/spot/tickers"
-    data = asyncio.run(gate_io_tickers(url, select_proxy()))
+    data = asyncio.run(gate_io_symbols())
     if data:
         found_records = filter_symbols(symbols, data)
         result = asyncio.run(gate_io_depth(found_records))
@@ -32,7 +31,9 @@ def gate_io(symbols, temp_table_name):
     logger.info(f"-------------------------------------------------- gate_io executed in {elapsed_time} seconds.")
 
 
-async def gate_io_tickers(url, proxy):
+async def gate_io_symbols():
+    proxy = select_proxy()
+    url = "https://api.gateio.ws/api/v4/spot/tickers"
     async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=10) as client:
         response = await client.get(url)
         return response.json() if response.status_code == 200 else None
