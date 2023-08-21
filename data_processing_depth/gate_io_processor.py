@@ -41,30 +41,43 @@ def insert_to_db(found_records, temp_table_name):
     records_to_insert_temp_depth = []
 
     for symbol_name, result in found_records.items():
-        if not result.get('asks') or not result.get('bids'):
+        asks = result.get('asks', [])
+        bids = result.get('bids', [])
+
+        if not asks or not bids:
             continue
+
         symbol_id = str(uuid.uuid4())
         symbol_name = symbol_name.replace("_", "-")
 
         try:
-            ask_price = result['asks'][0][0] if result['asks'] else None
-            bid_price = result['bids'][0][0] if result['bids'] else None
+            ask_price = asks[0][0] if asks else None
+            bid_price = bids[0][0] if bids else None
 
             records_to_insert_temp.append(
                 (symbol_id, symbol_name, ask_price, bid_price)
             )
-        except IndexError:
+        except (IndexError, TypeError) as e:
+            logger.error(f"Error processing ask/bid price for symbol {symbol_name}. Error: {str(e)}")
             continue
 
-        for ask in result['asks']:
-            records_to_insert_temp_depth.append(
-                (symbol_id, symbol_name, ask[0], ask[1], 'ask')
-            )
+        try:
+            for ask in asks:
+                records_to_insert_temp_depth.append(
+                    (symbol_id, symbol_name, ask[0], ask[1], 'ask')
+                )
+        except (IndexError, TypeError) as e:
+            logger.error(f"Error processing asks for symbol {symbol_name}. Error: {str(e)}")
+            continue
 
-        for bid in result['bids']:
-            records_to_insert_temp_depth.append(
-                (symbol_id, symbol_name, bid[0], bid[1], 'bid')
-            )
+        try:
+            for bid in bids:
+                records_to_insert_temp_depth.append(
+                    (symbol_id, symbol_name, bid[0], bid[1], 'bid')
+                )
+        except (IndexError, TypeError) as e:
+            logger.error(f"Error processing bids for symbol {symbol_name}. Error: {str(e)}")
+            continue
 
     cursor.executemany(query_temp_table, records_to_insert_temp)
     cursor.executemany(query_temp_table_depth, records_to_insert_temp_depth)
