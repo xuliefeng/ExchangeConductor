@@ -7,6 +7,7 @@ from flask_cors import CORS
 from config.logger_config import setup_logger
 from data_analysis.trade_analysis import fetch_combined_analysis_data
 from data_collection_depth.gate_io_collector import gate_io
+from data_collection_depth.huobi_collector import huobi
 
 from data_collection_depth.oxk_collector import okx
 from database.db_service import get_symbols, create_temp_table, delete_temp_table, get_reference_price, \
@@ -80,9 +81,9 @@ def test():
     # bigone(symbols)
     # jubi(symbols, reference)
     # binance(symbols, reference)
+    # gate_io(symbols, temp_table_name)
     okx(symbols, temp_table_name)
-    gate_io(symbols, temp_table_name)
-
+    # huobi(symbols, temp_table_name, reference)
     return "Success", 200
 
 

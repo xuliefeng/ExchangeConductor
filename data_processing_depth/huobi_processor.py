@@ -4,23 +4,24 @@ from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
 from mytools.time_util import get_current_time
 
-logger = setup_logger("okx_processor", "log/app.log")
+logger = setup_logger("huobi_processor", "log/app.log")
 
 
 def filter_symbols(symbols, data):
     found_records = []
-    inst_ids_set = set(item['instId'] for item in data)
+    inst_ids_set = set(item['symbol'] for item in data)
 
     for symbol in symbols:
+        symbol = str(symbol).replace('-', '').lower()
         if symbol in inst_ids_set:
             found_records.append(symbol)
 
-    logger.info(f"okx - symbols       : {len(data)}")
-    logger.info(f"okx - symbols found : {len(found_records)}")
+    logger.info(f"huobi - symbols       : {len(data)}")
+    logger.info(f"huobi - symbols found : {len(found_records)}")
     return found_records
 
 
-def insert_to_db(found_records, temp_table_name):
+def insert_to_db(found_records, temp_table_name, reference):
     current_time = get_current_time()
     connection = get_connection()
     cursor = connection.cursor()
@@ -28,7 +29,7 @@ def insert_to_db(found_records, temp_table_name):
     query_temp_table = f"""
         INSERT INTO {temp_table_name} (
             symbol_id, symbol_name, ask, bid, ask_size, bid_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, %s, '{current_time}', 'okx');
+        ) VALUES (%s, %s, %s, %s, %s, %s, '{current_time}', 'huobi');
     """
 
     query_temp_table_depth = f"""
@@ -41,7 +42,7 @@ def insert_to_db(found_records, temp_table_name):
     records_to_insert_temp_depth = []
 
     for symbol_name, result in found_records.items():
-        result = result.get('data', [])[0]
+        result = result.get('tick', [])
         asks = result.get('asks', [])
         bids = result.get('bids', [])
 
@@ -49,7 +50,7 @@ def insert_to_db(found_records, temp_table_name):
             continue
 
         symbol_id = str(uuid.uuid4())
-        symbol_name = symbol_name.replace("_", "-")
+        symbol_name = transform_symbol(symbol_name, reference)
 
         try:
             ask_price = asks[0][0] if asks else None
@@ -83,3 +84,9 @@ def insert_to_db(found_records, temp_table_name):
     connection.commit()
     cursor.close()
     release_connection(connection)
+
+
+def transform_symbol(symbol, reference):
+    for match in reference:
+        if symbol.endswith(str(match).lower()):
+            return str(symbol[:-len(match)]).upper() + '-' + match
