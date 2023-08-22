@@ -6,22 +6,9 @@ from flask_cors import CORS
 
 from config.logger_config import setup_logger
 from data_analysis.trade_analysis import fetch_combined_analysis_data
-from data_collection.ascend_ex_collector import ascend_ex
-from data_collection.bigone_collector import bigone
-from data_collection.binance_collector import binance
-from data_collection.bit_get_collector import bit_get
-from data_collection.bit_mark_collector import bit_mark
-from data_collection.bit_venus_collector import bit_venus
-from data_collection.bitfinex_collector import bitfinex
-from data_collection.bybit_collector import bybit
-from data_collection.deep_coin_collector import deep_coin
-from data_collection.hitbtc_collector import hitbtc
-from data_collection.huobi_collector import huobi
-from data_collection.jubi_collector import jubi
-from data_collection.mexc_collector import mexc
-from data_collection.okx_collector import okx
-from data_collection.xt_collector import xt
 from data_collection_depth.gate_io_collector import gate_io
+
+from data_collection_depth.oxk_collector import okx
 from database.db_service import get_symbols, create_temp_table, delete_temp_table, get_reference_price, \
     get_usd_to_cny_rate
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
@@ -33,23 +20,25 @@ logger = setup_logger("app", "log/app.log")
 
 exchange_functions = {
     "okx": okx,
-    "huobi": huobi,
-    "bitfinex": bitfinex,
-    "bitget": bit_get,
-    "mexc": mexc,
-    "bitvenus": bit_venus,
-    "deepcoin": deep_coin,
-    "ascendex": ascend_ex,
-    "bybit": bybit,
-    "xt": xt,
-    "hitbtc": hitbtc,
-    "bitmark": bit_mark,
-    "bigone": bigone,
-    "jubi": jubi,
-    "binance": binance,
+    # "huobi": huobi,
+    "gateio": gate_io,
+
+    # "bitfinex": bitfinex,
+    # "bitget": bit_get,
+    # "mexc": mexc,
+    # "bitvenus": bit_venus,
+    # "deepcoin": deep_coin,
+    # "ascendex": ascend_ex,
+    # "bybit": bybit,
+    # "xt": xt,
+    # "hitbtc": hitbtc,
+    # "bitmark": bit_mark,
+    # "bigone": bigone,
+    # "jubi": jubi,
+    # "binance": binance,
 }
 
-special_exchanges = ['okx', 'deepcoin', 'ascendex', 'xt', 'bitmark', 'bigone']
+special_exchanges = ['okx', 'gateio', 'deepcoin', 'ascendex', 'xt', 'bitmark', 'bigone']
 
 
 def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
@@ -91,7 +80,9 @@ def test():
     # bigone(symbols)
     # jubi(symbols, reference)
     # binance(symbols, reference)
+    okx(symbols, temp_table_name)
     gate_io(symbols, temp_table_name)
+
     return "Success", 200
 
 

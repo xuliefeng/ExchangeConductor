@@ -1,19 +1,14 @@
 import asyncio
-import random
 import time
 import httpx
 
 from config.logger_config import setup_logger
 from data_processing_depth.okx_processor import filter_symbols, insert_to_db
-from proxy_handler.proxy_loader import load_proxies_from_file
+from proxy_handler.proxy_loader import ProxyRotator
 
-proxies = load_proxies_from_file()
+rotator = ProxyRotator()
 
 logger = setup_logger("okx_collector", "log/app.log")
-
-
-def select_proxy():
-    return random.choice(proxies)
 
 
 def okx(symbols, temp_table_name):
@@ -25,7 +20,7 @@ def okx(symbols, temp_table_name):
         result = asyncio.run(okx_depth(found_records))
         insert_to_db(result, temp_table_name)
     else:
-        logger.error("Failed to get tickers from gate_io")
+        logger.error("Failed to get tickers from okx")
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
@@ -33,7 +28,7 @@ def okx(symbols, temp_table_name):
 
 
 async def okx_symbols():
-    proxy = select_proxy()
+    proxy = rotator.get_next_proxy()
     url = "https://www.okx.com/api/v5/market/tickers?instType=SPOT"
     async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=10) as client:
         response = await client.get(url)
@@ -48,7 +43,7 @@ async def okx_depth(found_records):
 
 
 async def fetch(symbol, url):
-    proxy = select_proxy()
+    proxy = rotator.get_next_proxy()
     async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=10) as client:
         response = await client.get(url + symbol)
         if response.status_code == 200:

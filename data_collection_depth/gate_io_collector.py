@@ -1,19 +1,14 @@
 import asyncio
-import random
 import time
 import httpx
 
 from config.logger_config import setup_logger
 from data_processing_depth.gate_io_processor import filter_symbols, insert_to_db
-from proxy_handler.proxy_loader import load_proxies_from_file
+from proxy_handler.proxy_loader import ProxyRotator
 
-proxies = load_proxies_from_file()
+rotator = ProxyRotator()
 
 logger = setup_logger("gate_io_collector", "log/app.log")
-
-
-def select_proxy():
-    return random.choice(proxies)
 
 
 def gate_io(symbols, temp_table_name):
@@ -28,11 +23,11 @@ def gate_io(symbols, temp_table_name):
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- gate_io executed in {elapsed_time} seconds.")
+    logger.info(f"-------------------------------------------------- gate_io all executed in {elapsed_time} seconds.")
 
 
 async def gate_io_symbols():
-    proxy = select_proxy()
+    proxy = rotator.get_next_proxy()
     url = "https://api.gateio.ws/api/v4/spot/tickers"
     async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=10) as client:
         response = await client.get(url)
@@ -47,7 +42,7 @@ async def gate_io_depth(found_records):
 
 
 async def fetch(symbol, url):
-    proxy = select_proxy()
+    proxy = rotator.get_next_proxy()
     async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=10) as client:
         response = await client.get(url + symbol)
         if response.status_code == 200:
