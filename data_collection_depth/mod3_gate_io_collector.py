@@ -7,7 +7,6 @@ from data_processing_depth.mod3_gate_io_processor import filter_symbols, insert_
 from proxy_handler.proxy_loader import ProxyRotator
 
 rotator = ProxyRotator()
-
 logger = setup_logger("gate_io_collector", "log/app.log")
 
 
