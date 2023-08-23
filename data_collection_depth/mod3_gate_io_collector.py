@@ -22,7 +22,7 @@ def gate_io(symbols, temp_table_name):
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- gate_io all executed in {elapsed_time} seconds.")
+    logger.info(f"-------------------------------------------------- gate_io executed in {elapsed_time} seconds.")
 
 
 async def gate_io_symbols():
