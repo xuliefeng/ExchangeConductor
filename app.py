@@ -10,6 +10,7 @@ from data_collection_depth.mod3_gate_io_collector import gate_io
 from data_collection_depth.mod2_huobi_collector import huobi
 
 from data_collection_depth.mod1_okx_collector import okx
+from data_collection_depth.mod4_ku_coin_collector import ku_coin
 from database.db_service import get_symbols, create_temp_table, delete_temp_table, get_reference_price, \
     get_usd_to_cny_rate
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
@@ -66,10 +67,10 @@ def test():
     symbols, reference = get_symbols()
     temp_table_name = create_temp_table()
 
-    okx(symbols, temp_table_name)
-    huobi(symbols, temp_table_name, reference)
-    gate_io(symbols, temp_table_name)
-
+    # okx(symbols, temp_table_name)
+    # huobi(symbols, temp_table_name, reference)
+    # gate_io(symbols, temp_table_name)
+    ku_coin(symbols, temp_table_name)
     return "Success", 200
 
 
