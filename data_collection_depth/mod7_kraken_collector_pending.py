@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 import httpx
 
 from config.logger_config import setup_logger
-from data_processing_depth.mod4_kraken_processor import filter_symbols, insert_to_db
+from data_processing_depth.mod7_kraken_processor_pending import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import ProxyRotator
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.options import Options
