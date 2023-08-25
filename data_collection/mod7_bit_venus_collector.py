@@ -3,14 +3,14 @@ import time
 import requests
 
 from config.logger_config import setup_logger
-from data_processing.bitfinex_processor import filter_symbols, insert_to_db
+from data_processing.mod7_bit_venus_processor import filter_symbols, insert_to_db
 
-logger = setup_logger("bitfinex_collector", "log/app.log")
+logger = setup_logger("bit_venus_collector", "log/app.log")
 
 
-def bitfinex(symbols, reference, temp_table_name):
+def bit_venus(symbols, reference, temp_table_name):
     start_time = time.time()
-    url = "https://api-pub.bitfinex.com/v2/tickers?symbols=ALL"
+    url = "https://www.bitvenus.me/openapi/quote/v1/ticker/bookTicker"
     response = requests.get(url)
 
     if response.status_code == 200:
@@ -22,4 +22,4 @@ def bitfinex(symbols, reference, temp_table_name):
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- bitfinex executed in {elapsed_time} seconds.")
+    logger.info(f"-------------------------------------------------- bit_venus executed in {elapsed_time} seconds.")

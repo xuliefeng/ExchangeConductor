@@ -3,7 +3,7 @@ import time
 import requests
 
 from config.logger_config import setup_logger
-from data_processing.xt_processor import filter_symbols, insert_to_db
+from data_processing.mod11_xt_processor import filter_symbols, insert_to_db
 
 logger = setup_logger("xt_collector", "log/app.log")
 
