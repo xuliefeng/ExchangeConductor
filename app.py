@@ -6,13 +6,24 @@ from flask_cors import CORS
 
 from config.logger_config import setup_logger
 from data_analysis.trade_analysis import fetch_combined_analysis_data
-from data_collection_depth.mod3_gate_io_collector import gate_io
-from data_collection_depth.mod2_huobi_collector import huobi
+from data_collection.mod9_ascend_ex_collector import ascend_ex
+from data_collection.mod14_bigone_collector import bigone
+from data_collection.mod2_binance_collector import binance
+from data_collection.mod4_bit_get_collector import bit_get
+from data_collection.mod13_bit_mark_collector import bit_mark
+from data_collection.mod7_bit_venus_collector import bit_venus
+from data_collection.mod5_bitfinex_collector import bitfinex
+from data_collection.mod10_bybit_collector import bybit
+from data_collection.mod8_deep_coin_collector import deep_coin
+from data_collection.mod12_hitbtc_collector import hitbtc
+from data_collection.mod3_huobi_collector import huobi
+from data_collection.mod15_jubi_collector import jubi
+from data_collection.mod6_mexc_collector import mexc
+from data_collection.mod1_okx_collector import okx
+from data_collection.mod11_xt_collector import xt
 
-from data_collection_depth.mod1_okx_collector import okx
-from bak.mod6_bit_get_collector import bit_get
 from database.db_service import get_symbols, create_temp_table, get_reference_price, \
-    get_usd_to_cny_rate
+    get_usd_to_cny_rate, delete_temp_table
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 
@@ -22,39 +33,34 @@ logger = setup_logger("app", "log/app.log")
 
 exchange_functions = {
     "okx": okx,
+    "binance": binance,
     "huobi": huobi,
-    "gateio": gate_io,
-
-    # "bitfinex": bitfinex,
-    # "bitget": bit_get,
-    # "mexc": mexc,
-    # "bitvenus": bit_venus,
-    # "deepcoin": deep_coin,
-    # "ascendex": ascend_ex,
-    # "bybit": bybit,
-    # "xt": xt,
-    # "hitbtc": hitbtc,
-    # "bitmark": bit_mark,
-    # "bigone": bigone,
-    # "jubi": jubi,
-    # "binance": binance,
+    "bitget": bit_get,
+    "bitfinex": bitfinex,
+    "mexc": mexc,
+    "bitvenus": bit_venus,
+    "deepcoin": deep_coin,
+    "ascendex": ascend_ex,
+    "bybit": bybit,
+    "xt": xt,
+    "hitbtc": hitbtc,
+    "bitmark": bit_mark,
+    "bigone": bigone,
+    "jubi": jubi,
 }
 
-special_exchanges = ['okx', 'gateio', 'deepcoin', 'ascendex', 'xt', 'bitmark', 'bigone']
 
-
-def execute_in_parallel(symbols, reference, temp_table_name, exchanges):
+def execute_in_parallel(symbols, temp_table_name, exchanges):
     start_time = time.time()
+
     with ThreadPoolExecutor() as executor:
 
         futures = [executor.submit(get_reference_price), executor.submit(get_usd_to_cny_rate)]
         for item in exchanges:
             exchange_name = item[1]
             if exchange_name in exchange_functions:
-                if exchange_name in special_exchanges:
-                    futures.append(executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
-                else:
-                    futures.append(executor.submit(exchange_functions[exchange_name], symbols, reference, temp_table_name))
+                futures.append(executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
+
         wait(futures)
 
     end_time = time.time()
@@ -72,7 +78,7 @@ def test():
     # gate_io(symbols, temp_table_name)
     # ku_coin(symbols, temp_table_name)
     # bitfinex(symbols, temp_table_name, reference)
-    bit_get(symbols, temp_table_name, reference)
+    # bit_get(symbols, temp_table_name, reference)
     return "Success", 200
 
 
@@ -81,7 +87,7 @@ def get_analysis_data():
     symbols, reference = get_symbols()
     exchanges = exchange_list_used()
     temp_table_name = create_temp_table()
-    execute_in_parallel(symbols, reference, temp_table_name, exchanges)
+    execute_in_parallel(symbols, temp_table_name, exchanges)
     data = fetch_combined_analysis_data(temp_table_name)
     # delete_temp_table(temp_table_name)
     return jsonify(data)

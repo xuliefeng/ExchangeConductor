@@ -45,13 +45,9 @@ def insert_to_db(found_records, temp_table_name):
 
                 if all([asset_pair_name, bid_price, bid_quantity, ask_price, ask_quantity]):
                     records_to_insert.append((asset_pair_name, bid_price, bid_quantity, ask_price, ask_quantity))
-                # Optional: Else block to handle cases where any value is empty.
-                # else:
-                #     print(f"Missing values for record: {record}")
 
             except Exception as e:
-                # You can log the error if needed
-                # print(f"Error processing record {record}. Error: {e}")
+                logger.error(f"Error processing record {record}. Error: {e}")
                 pass
 
         cursor.executemany(query, records_to_insert)

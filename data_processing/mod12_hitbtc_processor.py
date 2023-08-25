@@ -12,21 +12,16 @@ def filter_symbols(symbols, data):
     for symbol in symbols:
         combined_id = str(symbol).replace('-', '')
         if combined_id in inst_ids_set:
-            found_records.append({combined_id: data[combined_id]})
+            found_records.append({symbol: data[combined_id]})
 
     logger.info(f"hitbtc - symbols       : {len(data)}")
     logger.info(f"hitbtc - symbols found : {len(found_records)}")
     return found_records
 
 
-def insert_to_db(found_records, reference, temp_table_name):
+def insert_to_db(found_records, temp_table_name):
     connection = get_connection()
     cursor = connection.cursor()
-
-    for item in found_records:
-        key = list(item.keys())[0]
-        transformed_key = transform_symbol(key, reference)
-        item[transformed_key] = item.pop(key)
 
     query = f"""
         INSERT INTO {temp_table_name} (
@@ -36,8 +31,7 @@ def insert_to_db(found_records, reference, temp_table_name):
 
     records_to_insert = []
     for record in found_records:
-        symbol = list(record.keys())[0]
-        data = record[symbol]
+        symbol_name, data = list(record.items())[0]
 
         if data.get('ask') and len(data['ask']) > 0:
             ask_price = data['ask'][0][0]
@@ -55,7 +49,7 @@ def insert_to_db(found_records, reference, temp_table_name):
 
         records_to_insert.append(
             (
-                symbol,
+                symbol_name,
                 bid_price,
                 bid_size,
                 ask_price,

@@ -10,9 +10,10 @@ def filter_symbols(symbols, data):
     inst_ids_set = set(item['symbol'] for item in data)
 
     for symbol in symbols:
-        symbol = str(symbol).replace('-', '/')
-        if symbol in inst_ids_set:
-            found_records.append([item for item in data if item['symbol'] == symbol][0])
+        combined_id = str(symbol).replace('-', '/')
+        if combined_id in inst_ids_set:
+            matched_item = [item for item in data if item['symbol'] == combined_id][0]
+            found_records.append((symbol, matched_item))
 
     logger.info(f"ascend_ex - symbols       : {len(data)}")
     logger.info(f"ascend_ex - symbols found : {len(found_records)}")
@@ -22,9 +23,6 @@ def filter_symbols(symbols, data):
 def insert_to_db(found_records, temp_table_name):
     connection = get_connection()
     cursor = connection.cursor()
-
-    for item in found_records:
-        item['symbol'] = str(item['symbol']).replace('/', '-')
 
     query = f"""
         INSERT INTO {temp_table_name} (
@@ -37,11 +35,11 @@ def insert_to_db(found_records, temp_table_name):
         batch = found_records[i:i + batch_size]
         records_to_insert = [
             (
-                record['symbol'],
-                record['bid'][0],
-                record['bid'][1],
-                record['ask'][0],
-                record['ask'][1]
+                record[0],
+                record[1]['bid'][0],
+                record[1]['bid'][1],
+                record[1]['ask'][0],
+                record[1]['ask'][1]
             ) for record in batch
         ]
 

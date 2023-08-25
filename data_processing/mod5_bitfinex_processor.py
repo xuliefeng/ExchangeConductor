@@ -12,19 +12,17 @@ def filter_symbols(symbols, data):
     for symbol in symbols:
         combined_id = 't' + str(symbol).replace('-', '')
         if combined_id in inst_ids_set:
-            found_records.append([item for item in data if item[0] == combined_id][0])
+            matched_item = [item for item in data if item[0] == combined_id][0]
+            found_records.append((symbol, matched_item))
 
     logger.info(f"bitfinex - symbols       : {len(data)}")
     logger.info(f"bitfinex - symbols found : {len(found_records)}")
     return found_records
 
 
-def insert_to_db(found_records, reference, temp_table_name):
+def insert_to_db(found_records, temp_table_name):
     connection = get_connection()
     cursor = connection.cursor()
-
-    for item in found_records:
-        item[0] = transform_symbol(item[0], reference)
 
     query = f"""
         INSERT INTO {temp_table_name} (
@@ -38,10 +36,10 @@ def insert_to_db(found_records, reference, temp_table_name):
         records_to_insert = [
             (
                 record[0],
-                record[1],
-                record[2],
-                record[3],
-                record[4]
+                record[1][1],
+                record[1][2],
+                record[1][3],
+                record[1][4]
             ) for record in batch
         ]
 
@@ -49,12 +47,3 @@ def insert_to_db(found_records, reference, temp_table_name):
         connection.commit()
 
     release_connection(connection)
-
-
-def transform_symbol(symbol, reference):
-    for match in reference:
-        if symbol.endswith(match):
-            symbol = str(symbol).replace('t', '')
-            symbol = str(symbol[:-len(match)]) + '-' + match
-            return symbol
-    return symbol

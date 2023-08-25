@@ -12,19 +12,17 @@ def filter_symbols(symbols, data):
     for symbol in symbols:
         combined_id = str(symbol).replace('-', '').lower()
         if combined_id in inst_ids_set:
-            found_records.append([item for item in data if item['symbol'] == combined_id][0])
+            matched_item = [item for item in data if item['symbol'] == combined_id][0]
+            found_records.append((symbol, matched_item))
 
     logger.info(f"huobi - symbols       : {len(data)}")
     logger.info(f"huobi - symbols found : {len(found_records)}")
     return found_records
 
 
-def insert_to_db(found_records, reference, temp_table_name):
+def insert_to_db(found_records, temp_table_name):
     connection = get_connection()
     cursor = connection.cursor()
-
-    for item in found_records:
-        item['symbol'] = transform_symbol(item['symbol'], reference)
 
     query = f"""
         INSERT INTO {temp_table_name} (
@@ -37,11 +35,11 @@ def insert_to_db(found_records, reference, temp_table_name):
         batch = found_records[i:i + batch_size]
         records_to_insert = [
             (
-                record['symbol'],
-                record['bid'],
-                record['bidSize'],
-                record['ask'],
-                record['askSize']
+                record[0],
+                record[1]['bid'],
+                record[1]['bidSize'],
+                record[1]['ask'],
+                record[1]['askSize']
             ) for record in batch
         ]
 
@@ -49,10 +47,3 @@ def insert_to_db(found_records, reference, temp_table_name):
         connection.commit()
 
     release_connection(connection)
-
-
-def transform_symbol(symbol, reference):
-    for match in reference:
-        if symbol.endswith(match.lower()):
-            return str(symbol[:-len(match)]).upper() + '-' + match
-    return symbol.upper()

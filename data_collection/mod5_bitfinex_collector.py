@@ -8,7 +8,7 @@ from data_processing.mod5_bitfinex_processor import filter_symbols, insert_to_db
 logger = setup_logger("bitfinex_collector", "log/app.log")
 
 
-def bitfinex(symbols, reference, temp_table_name):
+def bitfinex(symbols, temp_table_name):
     start_time = time.time()
     url = "https://api-pub.bitfinex.com/v2/tickers?symbols=ALL"
     response = requests.get(url)
@@ -16,7 +16,7 @@ def bitfinex(symbols, reference, temp_table_name):
     if response.status_code == 200:
         data = response.json()
         found_records = filter_symbols(symbols, data)
-        insert_to_db(found_records, reference, temp_table_name)
+        insert_to_db(found_records, temp_table_name)
     else:
         logger.error(f"Request failed with status code {response.status_code}")
 
