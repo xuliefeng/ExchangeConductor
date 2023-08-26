@@ -7,7 +7,7 @@ def get_exchange():
         print(exchange)
 
 
-get_exchange()
+# get_exchange()
 
 
 def get_fetch_tickers():
@@ -17,7 +17,7 @@ def get_fetch_tickers():
             print(exchange_id)
 
 
-# get_fetch_tickers()
+get_fetch_tickers()
 
 
 def get_fetch_order_book():
@@ -26,5 +26,20 @@ def get_fetch_order_book():
         if exchange.has['fetchOrderBook']:
             print(exchange_id)
 
-
 # get_fetch_order_book()
+
+
+# exchange = ccxt.gateio()
+# tickers = exchange.fetch_tickers()
+# for symbol, ticker_info in tickers.items():
+#     print(symbol, ticker_info)
+
+# exchange = ccxt.kraken()
+# tickers = exchange.fetch_tickers()
+# for symbol, ticker_info in tickers.items():
+#     print(symbol, ticker_info)
+
+# exchange = ccxt.kucoin()
+# tickers = exchange.fetch_tickers()
+# for symbol, ticker_info in tickers.items():
+#     print(symbol, ticker_info)
