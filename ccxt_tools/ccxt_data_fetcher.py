@@ -29,17 +29,9 @@ def get_fetch_order_book():
 # get_fetch_order_book()
 
 
-# exchange = ccxt.gateio()
-# tickers = exchange.fetch_tickers()
-# for symbol, ticker_info in tickers.items():
-#     print(symbol, ticker_info)
+exchange = ccxt.gateio()
+tickers = exchange.fetch_tickers()
+for symbol, ticker_info in tickers.items():
+    print(symbol, ticker_info)
 
-# exchange = ccxt.kraken()
-# tickers = exchange.fetch_tickers()
-# for symbol, ticker_info in tickers.items():
-#     print(symbol, ticker_info)
 
-# exchange = ccxt.kucoin()
-# tickers = exchange.fetch_tickers()
-# for symbol, ticker_info in tickers.items():
-#     print(symbol, ticker_info)
