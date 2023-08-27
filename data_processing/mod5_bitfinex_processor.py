@@ -1,5 +1,6 @@
 from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
+from my_tools.time_util import get_current_time
 
 logger = setup_logger("bitfinex_processor", "log/app.log")
 
@@ -21,13 +22,14 @@ def filter_symbols(symbols, data):
 
 
 def insert_to_db(found_records, temp_table_name):
+    current_time = get_current_time()
     connection = get_connection()
     cursor = connection.cursor()
 
     query = f"""
         INSERT INTO {temp_table_name} (
             symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP, 'bitfinex');
+        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'bitfinex');
     """
 
     batch_size = 1000
