@@ -23,6 +23,8 @@ from data_collection.mod15_jubi_collector import jubi
 from data_collection.mod6_mexc_collector import mexc
 from data_collection.mod1_okx_collector import okx
 from data_collection.mod11_xt_collector import xt
+from data_collection_proxy.mod1_gate_io_collector import gate_io
+from data_collection_proxy.mod2_coin_w_collector import coin_w
 
 from database.db_service import get_symbols, create_temp_table, get_reference_price, \
     get_usd_to_cny_rate, delete_temp_table
@@ -34,29 +36,29 @@ CORS(app)
 logger = setup_logger("app", "log/app.log")
 
 exchange_functions = {
-    "okx": okx,
-    "binance": binance,
-    "huobi": huobi,
-    "bitget": bit_get,
-    "bitfinex": bitfinex,
-    "mexc": mexc,
-    "bitvenus": bit_venus,
-    "deepcoin": deep_coin,
-    "ascendex": ascend_ex,
-    "bybit": bybit,
-    "xt": xt,
-    "hitbtc": hitbtc,
-    "bitmark": bit_mark,
-    "bigone": bigone,
-    "jubi": jubi,
-    "latoken": la_token,
-    "coinex": coinex
+    'okx': okx,
+    'binance': binance,
+    'huobi': huobi,
+    'bitget': bit_get,
+    'bitfinex': bitfinex,
+    'mexc': mexc,
+    'bitvenus': bit_venus,
+    'deepcoin': deep_coin,
+    'ascendex': ascend_ex,
+    'bybit': bybit,
+    'xt': xt,
+    'hitbtc': hitbtc,
+    'bitmark': bit_mark,
+    'bigone': bigone,
+    'jubi': jubi,
+    'latoken': la_token,
+    'coinex': coinex,
+    'gateio': gate_io,
+    'coinw': coin_w
 }
 
 
 def execute_in_parallel(symbols, temp_table_name, exchanges):
-    start_time = time.time()
-
     with ThreadPoolExecutor() as executor:
 
         futures = [executor.submit(get_reference_price), executor.submit(get_usd_to_cny_rate)]
@@ -67,27 +69,31 @@ def execute_in_parallel(symbols, temp_table_name, exchanges):
 
         wait(futures)
 
-    end_time = time.time()
-    elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- all executed in {elapsed_time} seconds.")
 
-
-@app.route("/api/get", methods=["GET"])
+@app.route('/api/get', methods=['GET'])
 def test():
     symbols, reference = get_symbols()
     temp_table_name = create_temp_table()
-
     return "Success", 200
 
 
 @app.route('/api/get-analysis-data', methods=['GET'])
 def get_analysis_data():
+    start_time = time.time()
+
     symbols, reference = get_symbols()
     exchanges = exchange_list_used()
     temp_table_name = create_temp_table()
+
     execute_in_parallel(symbols, temp_table_name, exchanges)
+
     data = fetch_combined_analysis_data(temp_table_name)
     # delete_temp_table(temp_table_name)
+
+    end_time = time.time()
+    elapsed_time = round(end_time - start_time, 3)
+    logger.info(f"-------------------------------------------------- all executed in {elapsed_time} seconds.")
+
     return jsonify(data)
 
 
