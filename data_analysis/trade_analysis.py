@@ -30,9 +30,9 @@ WITH Combined AS (
         r.price AS reference_price,
         u.rate
     FROM Combined c
-    JOIN reference r ON c.symbol_name LIKE '%' || r.symbol_name
+    JOIN reference r ON split_part(c.symbol_name, '-', 2) = r.symbol_name
     JOIN usd_to_cny_rate u ON 1 = 1
-    WHERE c.price_diff_percentage IS NOT NULL
+    WHERE c.price_diff_percentage >= 1
 )
 SELECT 
     symbol_name,
