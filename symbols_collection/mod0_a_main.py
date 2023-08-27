@@ -2,6 +2,14 @@ import os
 
 from symbols_collection.mod16_la_token import la_token
 from symbols_collection.mod17_coinex import coinex
+from symbols_collection.mod18_gate_io import gate_io
+from symbols_collection.mod19_coin_w import coin_w
+from symbols_collection.mod20_bi_ka import bi_ka
+from symbols_collection.mod21_hot_coin import hot_coin
+from symbols_collection.mod22_digi_finex import digi_finex
+from symbols_collection.mod23_l_bank import l_bank
+from symbols_collection.mod24_bing_x import bing_x
+from symbols_collection.mod25_probit import probit
 from symbols_collection.mod9_ascend_ex import ascend_ex
 from symbols_collection.mod14_bigone import bigone
 from symbols_collection.mod2_binance import binance
@@ -35,6 +43,14 @@ bigone()
 jubi()
 la_token()
 coinex()
+gate_io()
+coin_w()
+bi_ka()
+hot_coin()
+digi_finex()
+l_bank()
+bing_x()
+probit()
 
 current_directory = os.getcwd()
 all_files = os.listdir(current_directory)

@@ -10,7 +10,7 @@ from database.db_pool import get_connection, release_connection
 logger = setup_logger("db_service", "log/app.log")
 
 
-def fetch_coin_names(table_name):
+def fetch_symbol_names(table_name):
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute(f"SELECT symbol_name FROM {table_name} order by symbol_id;")
@@ -20,8 +20,8 @@ def fetch_coin_names(table_name):
 
 
 def get_symbols():
-    symbols = fetch_coin_names("symbols")
-    reference = fetch_coin_names("reference")
+    symbols = fetch_symbol_names("symbols")
+    reference = fetch_symbol_names("reference")
     return symbols, reference
 
 
