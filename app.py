@@ -25,6 +25,11 @@ from data_collection.mod1_okx_collector import okx
 from data_collection.mod11_xt_collector import xt
 from data_collection_proxy.mod1_gate_io_collector import gate_io
 from data_collection_proxy.mod2_coin_w_collector import coin_w
+from data_collection_proxy.mod3_bi_ka_collector import bi_ka
+from data_collection_proxy.mod4_hot_coin_collector import hot_coin
+from data_collection_proxy.mod5_digi_finex_collector import digi_finex
+from data_collection_proxy.mod6_l_bank_collector import l_bank
+from data_collection_proxy.mod7_bing_x_collector import bing_x
 
 from database.db_service import get_symbols, create_temp_table, get_reference_price, \
     get_usd_to_cny_rate, delete_temp_table
@@ -54,7 +59,12 @@ exchange_functions = {
     'latoken': la_token,
     'coinex': coinex,
     'gateio': gate_io,
-    'coinw': coin_w
+    'coinw': coin_w,
+    'bika': bi_ka,
+    'hotcoin': hot_coin,
+    'digifinex': digi_finex,
+    'lbank': l_bank,
+    'bingx': bing_x
 }
 
 
@@ -74,6 +84,7 @@ def execute_in_parallel(symbols, temp_table_name, exchanges):
 def test():
     symbols, reference = get_symbols()
     temp_table_name = create_temp_table()
+
     return "Success", 200
 
 

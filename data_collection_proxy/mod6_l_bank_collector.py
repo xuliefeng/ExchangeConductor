@@ -1,4 +1,5 @@
 import asyncio
+import os
 import time
 import httpx
 
@@ -6,9 +7,9 @@ from config.logger_config import setup_logger
 from data_processing_proxy.mod6_l_bank_processor import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import ProxyRotator
 
-rotator = ProxyRotator()
 logger = setup_logger("l_bank_collector", "log/app.log")
-max_concurrent_requests = 500
+rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod6_l_bank.txt'))
+max_concurrent_requests = 600
 retry_limit = 3
 
 

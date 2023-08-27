@@ -1,11 +1,14 @@
 import os
 
-
 class ProxyRotator:
     DEFAULT_FILE_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'proxy_http_ip.txt')
 
-    def __init__(self, filepath=DEFAULT_FILE_PATH):
-        self.proxies = self.load_proxies_from_file(filepath)
+    def __init__(self, filepath=None):
+        if filepath is None:
+            self.filepath = self.DEFAULT_FILE_PATH
+        else:
+            self.filepath = filepath
+        self.proxies = self.load_proxies_from_file(self.filepath)
         self.index = 0
 
     @staticmethod

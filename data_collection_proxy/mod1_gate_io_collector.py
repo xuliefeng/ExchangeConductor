@@ -1,4 +1,5 @@
 import asyncio
+import os
 import time
 import httpx
 
@@ -6,9 +7,9 @@ from config.logger_config import setup_logger
 from data_processing_proxy.mod1_gate_io_processor import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import ProxyRotator
 
-rotator = ProxyRotator()
 logger = setup_logger("gate_io_collector", "log/app.log")
-max_concurrent_requests = 500
+rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod1_gate_io.txt'))
+max_concurrent_requests = 1000
 retry_limit = 3
 
 
