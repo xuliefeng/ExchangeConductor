@@ -52,7 +52,7 @@ async def fetch(symbol, url, semaphore):
                 async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=20) as client:
                     response = await client.get(url + symbol)
                     if response.status_code == 200:
-                        logger.info("success: " + symbol)
+                        # logger.info("success: " + symbol)
                         return symbol, response.json()
                     else:
                         logger.info(f"Request failed {symbol} status code {response.status_code} - bing_x")
