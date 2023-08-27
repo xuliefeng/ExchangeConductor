@@ -3,6 +3,7 @@ import uuid
 from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
 from my_tools.time_util import get_current_time
+
 logger = setup_logger("gate_io_processor", "log/app.log")
 
 
@@ -27,18 +28,11 @@ def insert_to_db(found_records, temp_table_name):
 
     query_temp_table = f"""
         INSERT INTO {temp_table_name} (
-            symbol_id, symbol_name, ask, bid, ask_size, bid_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, %s, '{current_time}', 'gateio');
-    """
-
-    query_temp_table_depth = f"""
-        INSERT INTO {temp_table_name + '_depth'} (
-            symbol_id, symbol_name, price, size, type
-        ) VALUES (%s, %s, %s, %s, %s);
+            symbol_name, ask, bid, ask_size, bid_size, update_time, exchange_name
+        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'gateio');
     """
 
     records_to_insert_temp = []
-    records_to_insert_temp_depth = []
 
     for symbol_name, result in found_records.items():
         asks = result.get('asks', [])
@@ -47,7 +41,6 @@ def insert_to_db(found_records, temp_table_name):
         if not asks or not bids:
             continue
 
-        symbol_id = str(uuid.uuid4())
         symbol_name = symbol_name.replace("_", "-")
 
         try:
@@ -57,32 +50,13 @@ def insert_to_db(found_records, temp_table_name):
             bid_size = bids[0][1] if bids else None
 
             records_to_insert_temp.append(
-                (symbol_id, symbol_name, ask_price, bid_price, ask_size, bid_size)
+                (symbol_name, ask_price, bid_price, ask_size, bid_size)
             )
         except (IndexError, TypeError, ValueError) as e:
             logger.error(f"Error processing ask/bid price for symbol {symbol_name}. Error: {str(e)}")
             continue
 
-        try:
-            for ask in asks:
-                records_to_insert_temp_depth.append(
-                    (symbol_id, symbol_name, ask[0], ask[1], 'ask')
-                )
-        except (IndexError, TypeError, ValueError) as e:
-            logger.error(f"Error processing asks for symbol {symbol_name}. Error: {str(e)}")
-            continue
-
-        try:
-            for bid in bids:
-                records_to_insert_temp_depth.append(
-                    (symbol_id, symbol_name, bid[0], bid[1], 'bid')
-                )
-        except (IndexError, TypeError) as e:
-            logger.error(f"Error processing bids for symbol {symbol_name}. Error: {str(e)}")
-            continue
-
     cursor.executemany(query_temp_table, records_to_insert_temp)
-    cursor.executemany(query_temp_table_depth, records_to_insert_temp_depth)
     connection.commit()
     cursor.close()
     release_connection(connection)

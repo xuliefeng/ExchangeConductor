@@ -3,11 +3,14 @@ import time
 import httpx
 
 from config.logger_config import setup_logger
-from data_processing_proxy.pending_gate_io_processor import filter_symbols, insert_to_db
+from data_processing_proxy.mod1_gate_io_processor import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import ProxyRotator
 
 rotator = ProxyRotator()
 logger = setup_logger("gate_io_collector", "log/app.log")
+max_concurrent_requests = 500
+retry_limit = 3
+
 
 
 def gate_io(symbols, temp_table_name):
@@ -35,17 +38,29 @@ async def gate_io_symbols():
 
 async def gate_io_depth(found_records):
     url = "https://api.gateio.ws/api/v4/spot/order_book?limit=10&currency_pair="
-    tasks = [fetch(symbol, url) for symbol in found_records]
+    semaphore = asyncio.Semaphore(max_concurrent_requests)
+    tasks = [fetch(symbol, url, semaphore) for symbol in found_records]
     results = await asyncio.gather(*tasks)
     return {symbol: result for symbol, result in results if result}
 
 
-async def fetch(symbol, url):
+async def fetch(symbol, url, semaphore):
     proxy = rotator.get_next_proxy()
-    async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=10) as client:
-        response = await client.get(url + symbol)
-        if response.status_code == 200:
-            return symbol, response.json()
-        else:
-            logger.info(f"Request failed {symbol} status code {response.status_code} - gate_io")
-            return symbol, None
+
+    for retry in range(retry_limit):
+        async with semaphore:
+            try:
+                async with httpx.AsyncClient(proxies=proxy, verify=False, timeout=20) as client:
+                    response = await client.get(url + symbol)
+                    if response.status_code == 200:
+                        logger.info("success: " + symbol)
+                        return symbol, response.json()
+                    else:
+                        logger.info(f"Request failed {symbol} status code {response.status_code} - gate_io")
+                        await asyncio.sleep(0.1)
+
+            except Exception as e:
+                logger.error(f"Error fetching {symbol}. Reason: {repr(e)}")
+                await asyncio.sleep(0.1)
+
+    return symbol, None
