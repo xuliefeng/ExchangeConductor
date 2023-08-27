@@ -6,6 +6,8 @@ from flask_cors import CORS
 
 from config.logger_config import setup_logger
 from data_analysis.trade_analysis import fetch_combined_analysis_data
+from data_collection.mod16_la_token_collector import la_token
+from data_collection.mod17_coinex_collector import coinex
 from data_collection.mod9_ascend_ex_collector import ascend_ex
 from data_collection.mod14_bigone_collector import bigone
 from data_collection.mod2_binance_collector import binance
@@ -73,12 +75,7 @@ def test():
     symbols, reference = get_symbols()
     temp_table_name = create_temp_table()
 
-    # okx(symbols, temp_table_name)
-    # huobi(symbols, temp_table_name, reference)
-    # gate_io(symbols, temp_table_name)
-    # ku_coin(symbols, temp_table_name)
-    # bitfinex(symbols, temp_table_name, reference)
-    # bit_get(symbols, temp_table_name, reference)
+    coinex(symbols, temp_table_name)
     return "Success", 200
 
 
