@@ -27,7 +27,7 @@ def insert_to_db(found_records, temp_table_name):
     query_temp_table = f"""
         INSERT INTO {temp_table_name} (
             symbol_name, ask, bid, ask_size, bid_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'hot_coin');
+        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'hotcoin');
     """
 
     records_to_insert_temp = []
