@@ -75,7 +75,6 @@ def test():
     symbols, reference = get_symbols()
     temp_table_name = create_temp_table()
 
-    coinex(symbols, temp_table_name)
     return "Success", 200
 
 

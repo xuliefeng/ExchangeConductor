@@ -64,10 +64,3 @@ def insert_to_db(found_records, temp_table_name):
         connection.commit()
 
     release_connection(connection)
-
-
-def transform_symbol(symbol, reference):
-    for match in reference:
-        if symbol.endswith(match):
-            return str(symbol[:-len(match)]) + '-' + match
-    return symbol
