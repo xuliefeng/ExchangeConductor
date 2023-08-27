@@ -49,6 +49,8 @@ exchange_functions = {
     "bitmark": bit_mark,
     "bigone": bigone,
     "jubi": jubi,
+    "latoken": la_token,
+    "coinex": coinex
 }
 
 

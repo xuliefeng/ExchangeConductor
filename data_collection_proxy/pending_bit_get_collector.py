@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from seleniumwire import webdriver
 
 from config.logger_config import setup_logger
-from data_processing_proxy.pending_bit_get_processor_pending import filter_symbols, insert_to_db
+from data_processing_proxy.pending_bit_get_processor import filter_symbols, insert_to_db
 from proxy_handler.proxy_loader import ProxyRotator
 
 rotator = ProxyRotator()
