@@ -48,7 +48,7 @@ def transform_and_filter_symbols(data, ref):
     for base_currency in base_symbols:
         found = False
         for ref_currency in ref:
-            matched_symbol = f"{base_currency}{str(ref_currency)}"
+            matched_symbol = f"{base_currency}{ref_currency}"
             if matched_symbol in [item for item in data.keys()]:
                 transformed_symbols.append(base_currency + '-' + ref_currency)
                 found = True

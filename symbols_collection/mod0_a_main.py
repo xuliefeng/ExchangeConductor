@@ -1,5 +1,7 @@
 import os
 
+from symbols_collection.mod16_la_token import la_token
+from symbols_collection.mod17_coinex import coinex
 from symbols_collection.mod9_ascend_ex import ascend_ex
 from symbols_collection.mod14_bigone import bigone
 from symbols_collection.mod2_binance import binance
@@ -31,6 +33,8 @@ hitbtc()
 bit_mart()
 bigone()
 jubi()
+la_token()
+coinex()
 
 current_directory = os.getcwd()
 all_files = os.listdir(current_directory)
