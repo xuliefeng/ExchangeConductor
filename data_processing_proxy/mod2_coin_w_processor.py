@@ -41,7 +41,7 @@ def insert_to_db(found_records, temp_table_name):
         if not asks or not bids:
             continue
 
-        symbol_name = symbol_name.replace("_", "-")
+        symbol_name = str(symbol_name).replace("_", "-")
 
         try:
             ask_price = asks[0][0] if asks else None
