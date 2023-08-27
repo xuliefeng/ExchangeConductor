@@ -19,13 +19,13 @@ def coin_w(symbols, temp_table_name):
         found_records = filter_symbols(symbols, data)
         result = asyncio.run(coin_w_depth(found_records))
         insert_to_db(result, temp_table_name)
+
+        end_time = time.time()
+        elapsed_time = round(end_time - start_time, 3)
+        logger.info(
+            f"-------------------------------------------------- coin_w executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
     else:
         logger.error("Failed to get tickers from coin_w")
-
-    end_time = time.time()
-    elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- coin_w executed in {elapsed_time} seconds.")
-
 
 async def coin_w_symbols():
     proxy = rotator.get_next_proxy()
@@ -59,7 +59,7 @@ async def fetch(symbol, url, semaphore):
                         await asyncio.sleep(0.1)
 
             except Exception as e:
-                logger.error(f"Error fetching {symbol}. Reason: {repr(e)} - coin_w")
+                logger.error(f"Error fetching {symbol}. {repr(e)} - coin_w")
                 await asyncio.sleep(0.1)
 
     return symbol, None

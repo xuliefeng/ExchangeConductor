@@ -19,12 +19,13 @@ def hot_coin(symbols, temp_table_name):
         found_records = filter_symbols(symbols, data)
         result = asyncio.run(hot_coin_depth(found_records))
         insert_to_db(result, temp_table_name)
+
+        end_time = time.time()
+        elapsed_time = round(end_time - start_time, 3)
+        logger.info(
+            f"-------------------------------------------------- hot_coin executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
     else:
         logger.error("Failed to get tickers from hot_coin")
-
-    end_time = time.time()
-    elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- hot_coin executed in {elapsed_time} seconds.")
 
 
 async def hot_coin_symbols():
@@ -59,7 +60,7 @@ async def fetch(symbol, url, semaphore):
                         await asyncio.sleep(0.1)
 
             except Exception as e:
-                logger.error(f"Error fetching {symbol}. Reason: {repr(e)} - hot_coin")
+                logger.error(f"Error fetching {symbol}. {repr(e)} - hot_coin")
                 await asyncio.sleep(0.1)
 
     return symbol, None

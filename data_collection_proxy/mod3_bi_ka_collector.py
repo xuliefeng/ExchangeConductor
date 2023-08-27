@@ -19,13 +19,13 @@ def bi_ka(symbols, temp_table_name):
         found_records = filter_symbols(symbols, data)
         result = asyncio.run(bi_ka_depth(found_records))
         insert_to_db(result, temp_table_name)
+
+        end_time = time.time()
+        elapsed_time = round(end_time - start_time, 3)
+        logger.info(
+            f"-------------------------------------------------- bi_ka executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
     else:
         logger.error("Failed to get tickers from bi_ka")
-
-    end_time = time.time()
-    elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- bi_ka executed in {elapsed_time} seconds.")
-
 
 async def bi_ka_symbols():
     proxy = rotator.get_next_proxy()
@@ -59,7 +59,7 @@ async def fetch(symbol, url, semaphore):
                         await asyncio.sleep(0.1)
 
             except Exception as e:
-                logger.error(f"Error fetching {symbol}. Reason: {repr(e)} - bi_ka")
+                logger.error(f"Error fetching {symbol}. {repr(e)} - bi_ka")
                 await asyncio.sleep(0.1)
 
     return symbol, None

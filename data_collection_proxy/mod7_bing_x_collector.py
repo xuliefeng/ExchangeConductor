@@ -19,12 +19,13 @@ def bing_x(symbols, temp_table_name):
         found_records = filter_symbols(symbols, data)
         result = asyncio.run(bing_x_depth(found_records))
         insert_to_db(result, temp_table_name)
+
+        end_time = time.time()
+        elapsed_time = round(end_time - start_time, 3)
+        logger.info(
+            f"-------------------------------------------------- bing_x executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
     else:
         logger.error("Failed to get tickers from bing_x")
-
-    end_time = time.time()
-    elapsed_time = round(end_time - start_time, 3)
-    logger.info(f"-------------------------------------------------- bing_x executed in {elapsed_time} seconds.")
 
 
 async def bing_x_symbols():
@@ -59,7 +60,7 @@ async def fetch(symbol, url, semaphore):
                         await asyncio.sleep(0.1)
 
             except Exception as e:
-                logger.error(f"Error fetching {symbol}. Reason: {repr(e)} - bing_x")
+                logger.error(f"Error fetching {symbol}. {repr(e)} - bing_x")
                 await asyncio.sleep(0.1)
 
     return symbol, None
