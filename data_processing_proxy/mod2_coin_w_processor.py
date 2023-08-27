@@ -3,20 +3,20 @@ from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
 from my_tools.time_util import get_current_time
 
-logger = setup_logger("gate_io_processor", "log/app.log")
+logger = setup_logger("coin_w_processor", "log/app.log")
 
 
 def filter_symbols(symbols, data):
     found_records = []
-    inst_ids_set = set(item['currency_pair'] for item in data)
+    inst_ids_set = set(item['currencyPair'] for item in data)
 
     for symbol in symbols:
         symbol = str(symbol).replace('-', '_')
         if symbol in inst_ids_set:
             found_records.append(symbol)
 
-    logger.info(f"gate_io - symbols       : {len(data)}")
-    logger.info(f"gate_io - symbols found : {len(found_records)}")
+    logger.info(f"coin_w - symbols       : {len(data)}")
+    logger.info(f"coin_w - symbols found : {len(found_records)}")
     return found_records
 
 
@@ -28,12 +28,13 @@ def insert_to_db(found_records, temp_table_name):
     query_temp_table = f"""
         INSERT INTO {temp_table_name} (
             symbol_name, ask, bid, ask_size, bid_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'gateio');
+        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'coinw');
     """
 
     records_to_insert_temp = []
 
     for symbol_name, result in found_records.items():
+        result = result.get('data', {})
         asks = result.get('asks', [])
         bids = result.get('bids', [])
 
