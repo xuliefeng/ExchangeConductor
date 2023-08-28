@@ -1,5 +1,5 @@
 import time
-from concurrent.futures import ThreadPoolExecutor, wait
+from concurrent.futures import ThreadPoolExecutor, wait, ProcessPoolExecutor
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -67,15 +67,25 @@ exchange_functions = {
     'bingx': bing_x
 }
 
+special_exchanges = ['gateio', 'coinw', 'bika', 'hotcoin', 'digifinex', 'lbank', 'bingx']
+
 
 def execute_in_parallel(symbols, temp_table_name, exchanges):
-    with ThreadPoolExecutor() as executor:
+    with ThreadPoolExecutor() as thread_executor, ProcessPoolExecutor() as process_executor:
 
-        futures = [executor.submit(get_reference_price), executor.submit(get_usd_to_cny_rate)]
+        futures = [
+            thread_executor.submit(get_reference_price),
+            thread_executor.submit(get_usd_to_cny_rate)
+        ]
+
         for item in exchanges:
             exchange_name = item[1]
+
             if exchange_name in exchange_functions:
-                futures.append(executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
+                if exchange_name in special_exchanges:
+                    futures.append(process_executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
+                else:
+                    futures.append(thread_executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
 
         wait(futures)
 

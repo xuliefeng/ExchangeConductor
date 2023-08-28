@@ -9,6 +9,7 @@ from proxy_handler.proxy_loader import ProxyRotator
 
 logger = setup_logger("bi_ka_collector", "log/app.log")
 rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod3_bi_ka.txt'))
+# rotator = ProxyRotator()
 max_concurrent_requests = 60
 retry_limit = 3
 

@@ -9,7 +9,8 @@ from proxy_handler.proxy_loader import ProxyRotator
 
 logger = setup_logger("gate_io_collector", "log/app.log")
 rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod1_gate_io.txt'))
-max_concurrent_requests = 1000
+# rotator = ProxyRotator()
+max_concurrent_requests = 500
 retry_limit = 3
 
 

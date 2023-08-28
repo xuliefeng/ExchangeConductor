@@ -9,7 +9,8 @@ from proxy_handler.proxy_loader import ProxyRotator
 
 logger = setup_logger("digi_finex_collector", "log/app.log")
 rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod5_digi_finex.txt'))
-max_concurrent_requests = 500
+# rotator = ProxyRotator()
+max_concurrent_requests = 250
 retry_limit = 3
 
 
