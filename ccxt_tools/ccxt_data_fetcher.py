@@ -29,9 +29,12 @@ def get_fetch_order_book():
 # get_fetch_order_book()
 
 
-exchange = ccxt.gateio()
-tickers = exchange.fetch_tickers()
-for symbol, ticker_info in tickers.items():
-    print(symbol, ticker_info)
+# exchange = ccxt.probit()
+# tickers = exchange.fetch_tickers()
+# for symbol, ticker_info in tickers.items():
+#     print(symbol, ticker_info)
 
+exchange = ccxt.probit()
+order_book = exchange.fetch_order_book('TLW-USDT')
+print(order_book)
 

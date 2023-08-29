@@ -30,6 +30,7 @@ from data_collection_proxy.mod4_hot_coin_collector import hot_coin
 from data_collection_proxy.mod5_digi_finex_collector import digi_finex
 from data_collection_proxy.mod6_l_bank_collector import l_bank
 from data_collection_proxy.mod7_bing_x_collector import bing_x
+from data_collection_proxy.mod8_probit_collector import probit
 
 from database.db_service import get_symbols, create_temp_table, get_reference_price, \
     get_usd_to_cny_rate, delete_temp_table
@@ -64,10 +65,11 @@ exchange_functions = {
     'hotcoin': hot_coin,
     'digifinex': digi_finex,
     'lbank': l_bank,
-    'bingx': bing_x
+    'bingx': bing_x,
+    'probit': probit
 }
 
-special_exchanges = ['gateio', 'coinw', 'bika', 'hotcoin', 'digifinex', 'lbank', 'bingx']
+special_exchanges = ['gateio', 'coinw', 'bika', 'hotcoin', 'digifinex', 'lbank', 'bingx', 'probit']
 
 
 def execute_in_parallel(symbols, temp_table_name, exchanges):
