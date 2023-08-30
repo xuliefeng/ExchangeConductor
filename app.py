@@ -35,7 +35,8 @@ from data_collection_proxy.mod8_probit_collector import probit
 from database.db_service import get_symbols, create_temp_table, get_reference_price, \
     get_usd_to_cny_rate, delete_temp_table
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
-from web_interaction.exclusion import load_exclusion_list, exclusion_list, delete_exclusion_record
+from web_interaction.exclusion import load_exclusion_list, exclusion_list, delete_exclusion_record, \
+    insert_exclusion_record
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 
 app = Flask(__name__)
@@ -169,6 +170,13 @@ def add_symbol():
     data = request.json
     symbol_name = data['symbolName']
     insert_record(symbol_name)
+    return "Success", 200
+
+
+@app.route('/api/add-exclusion', methods=['POST'])
+def add_exclusion():
+    data = request.json
+    insert_exclusion_record(data)
     return "Success", 200
 
 

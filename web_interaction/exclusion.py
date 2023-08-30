@@ -55,3 +55,25 @@ def delete_exclusion_record(exclusion_id):
     cursor.execute(sql_script)
     connection.commit()
     release_connection(connection)
+
+
+def insert_exclusion_record(data):
+    exchange_name = data['exchangeName']
+    pair_name = data['pairName']
+    exclusion_type = data['type']
+    expiry_days = data['expiryDays']
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    sql_script = """INSERT INTO exclusion_list (exchange_name, excluded_pair, type, status, expire_date) VALUES (%s, %s, %s, 1, %s)"""
+
+    values = (
+        [exchange_name,
+         pair_name,
+         exclusion_type,
+         expiry_days]
+    )
+    cursor.execute(sql_script, values)
+    connection.commit()
+    release_connection(connection)
