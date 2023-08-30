@@ -8,7 +8,7 @@ from data_processing.mod10_bybit_processor import filter_symbols, insert_to_db
 logger = setup_logger("bybit_collector", "log/app.log")
 
 
-def bybit(symbols, temp_table_name):
+def bybit(temp_table_name):
     start_time = time.time()
     url = "https://api.bybit.com/v5/market/tickers?category=spot"
     response = requests.get(url)
@@ -16,7 +16,7 @@ def bybit(symbols, temp_table_name):
     if response.status_code == 200:
         data = response.json()
         data = data['result']['list']
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         insert_to_db(found_records, temp_table_name)
     else:
         logger.error(f"Request failed with status code {response.status_code}")

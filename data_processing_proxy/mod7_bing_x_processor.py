@@ -2,13 +2,15 @@
 from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
 from my_tools.time_util import get_current_time
+from web_interaction.exchange import get_filtered_symbols_for_exchange
 
 logger = setup_logger("bing_x_processor", "log/app.log")
 
 
-def filter_symbols(symbols, data):
+def filter_symbols(data):
     found_records = []
     inst_ids_set = set(item['symbol'] for item in data)
+    symbols = get_filtered_symbols_for_exchange('bingx')
 
     for symbol in symbols:
         if symbol in inst_ids_set:

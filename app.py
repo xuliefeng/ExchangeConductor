@@ -34,7 +34,7 @@ from data_collection_proxy.mod8_probit_collector import probit
 
 from database.db_service import get_symbols, create_temp_table, get_reference_price, \
     get_usd_to_cny_rate, delete_temp_table
-from web_interaction.exchange import exchange_list, update_status, exchange_list_used
+from web_interaction.exchange import exchange_list, update_status, exchange_list_used, load_exclusion_list
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 
 app = Flask(__name__)
@@ -72,7 +72,7 @@ exchange_functions = {
 special_exchanges = ['gateio', 'coinw', 'bika', 'hotcoin', 'digifinex', 'lbank', 'bingx', 'probit']
 
 
-def execute_in_parallel(symbols, temp_table_name, exchanges):
+def execute_in_parallel(temp_table_name, exchanges):
     with ThreadPoolExecutor() as thread_executor, ProcessPoolExecutor() as process_executor:
 
         futures = [
@@ -85,18 +85,18 @@ def execute_in_parallel(symbols, temp_table_name, exchanges):
 
             if exchange_name in exchange_functions:
                 if exchange_name in special_exchanges:
-                    futures.append(process_executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
+                    futures.append(process_executor.submit(exchange_functions[exchange_name], temp_table_name))
                 else:
-                    futures.append(thread_executor.submit(exchange_functions[exchange_name], symbols, temp_table_name))
+                    futures.append(thread_executor.submit(exchange_functions[exchange_name], temp_table_name))
 
         wait(futures)
 
 
 @app.route('/api/get', methods=['GET'])
 def test():
-    symbols, reference = get_symbols()
     temp_table_name = create_temp_table()
 
+    okx(temp_table_name)
     return "Success", 200
 
 
@@ -104,11 +104,11 @@ def test():
 def get_analysis_data():
     start_time = time.time()
 
-    symbols, reference = get_symbols()
     exchanges = exchange_list_used()
     temp_table_name = create_temp_table()
+    load_exclusion_list()
 
-    execute_in_parallel(symbols, temp_table_name, exchanges)
+    execute_in_parallel(temp_table_name, exchanges)
 
     data = fetch_combined_analysis_data(temp_table_name)
     # delete_temp_table(temp_table_name)

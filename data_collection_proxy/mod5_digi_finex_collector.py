@@ -14,11 +14,11 @@ max_concurrent_requests = 250
 retry_limit = 3
 
 
-def digi_finex(symbols, temp_table_name):
+def digi_finex(temp_table_name):
     start_time = time.time()
     data = asyncio.run(digi_finex_symbols())
     if data:
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         result = asyncio.run(digi_finex_depth(found_records))
         insert_to_db(result, temp_table_name)
 

@@ -8,7 +8,7 @@ from data_processing.mod11_xt_processor import filter_symbols, insert_to_db
 logger = setup_logger("xt_collector", "log/app.log")
 
 
-def xt(symbols, temp_table_name):
+def xt(temp_table_name):
     start_time = time.time()
     url = "https://sapi.xt.com/v4/public/ticker/book"
     response = requests.get(url)
@@ -16,7 +16,7 @@ def xt(symbols, temp_table_name):
     if response.status_code == 200:
         data = response.json()
         data = data['result']
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         insert_to_db(found_records, temp_table_name)
     else:
         logger.error(f"Request failed with status code {response.status_code}")

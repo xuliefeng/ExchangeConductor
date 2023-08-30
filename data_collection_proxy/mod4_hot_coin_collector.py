@@ -14,11 +14,11 @@ max_concurrent_requests = 200
 retry_limit = 3
 
 
-def hot_coin(symbols, temp_table_name):
+def hot_coin(temp_table_name):
     start_time = time.time()
     data = asyncio.run(hot_coin_symbols())
     if data:
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         result = asyncio.run(hot_coin_depth(found_records))
         insert_to_db(result, temp_table_name)
 

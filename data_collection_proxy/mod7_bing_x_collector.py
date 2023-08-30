@@ -14,11 +14,11 @@ max_concurrent_requests = 300
 retry_limit = 3
 
 
-def bing_x(symbols, temp_table_name):
+def bing_x(temp_table_name):
     start_time = time.time()
     data = asyncio.run(bing_x_symbols())
     if data:
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         result = asyncio.run(bing_x_depth(found_records))
         insert_to_db(result, temp_table_name)
 

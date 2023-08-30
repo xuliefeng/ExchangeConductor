@@ -14,11 +14,11 @@ max_concurrent_requests = 500
 retry_limit = 3
 
 
-def gate_io(symbols, temp_table_name):
+def gate_io(temp_table_name):
     start_time = time.time()
     data = asyncio.run(gate_io_symbols())
     if data:
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         result = asyncio.run(gate_io_depth(found_records))
         insert_to_db(result, temp_table_name)
 

@@ -8,7 +8,7 @@ from data_processing.mod14_bigone_processor import filter_symbols, insert_to_db
 logger = setup_logger("bigone_collector", "log/app.log")
 
 
-def bigone(symbols, temp_table_name):
+def bigone(temp_table_name):
     start_time = time.time()
     url = "https://big.one/api/v3/asset_pairs/tickers"
     response = requests.get(url)
@@ -16,7 +16,7 @@ def bigone(symbols, temp_table_name):
     if response.status_code == 200:
         data = response.json()
         data = data['data']
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         insert_to_db(found_records, temp_table_name)
     else:
         logger.error(f"Request failed with status code {response.status_code}")

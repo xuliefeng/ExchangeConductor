@@ -14,11 +14,11 @@ max_concurrent_requests = 400
 retry_limit = 3
 
 
-def probit(symbols, temp_table_name):
+def probit(temp_table_name):
     start_time = time.time()
     data = asyncio.run(probit_symbols())
     if data:
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         result = asyncio.run(probit_depth(found_records))
         insert_to_db(result, temp_table_name)
 

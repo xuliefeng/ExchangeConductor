@@ -14,11 +14,11 @@ max_concurrent_requests = 60
 retry_limit = 3
 
 
-def bi_ka(symbols, temp_table_name):
+def bi_ka(temp_table_name):
     start_time = time.time()
     data = asyncio.run(bi_ka_symbols())
     if data:
-        found_records = filter_symbols(symbols, data)
+        found_records = filter_symbols(data)
         result = asyncio.run(bi_ka_depth(found_records))
         insert_to_db(result, temp_table_name)
 
