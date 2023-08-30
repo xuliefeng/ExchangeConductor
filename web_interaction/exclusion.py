@@ -59,7 +59,7 @@ def delete_exclusion_record(exclusion_id):
 
 def insert_exclusion_record(data):
     exchange_name = data['exchangeName']
-    pair_name = data['pairName']
+    symbol_name = data['symbolName']
     exclusion_type = data['type']
     expiry_days = data['expiryDays']
 
@@ -70,7 +70,7 @@ def insert_exclusion_record(data):
 
     values = (
         [exchange_name,
-         pair_name,
+         symbol_name,
          exclusion_type,
          expiry_days]
     )

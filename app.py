@@ -37,6 +37,7 @@ from database.db_service import get_symbols, create_temp_table, get_reference_pr
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
 from web_interaction.exclusion import load_exclusion_list, exclusion_list, delete_exclusion_record, \
     insert_exclusion_record
+from web_interaction.reference import reference_list
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 
 app = Flask(__name__)
@@ -131,6 +132,12 @@ def get_exchange_list():
 @app.route('/api/get-exclusion-list', methods=['GET'])
 def get_exclusion_list():
     data = exclusion_list()
+    return jsonify(data)
+
+
+@app.route('/api/get-reference-list', methods=['GET'])
+def get_reference_list():
+    data = reference_list()
     return jsonify(data)
 
 
