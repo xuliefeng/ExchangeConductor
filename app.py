@@ -39,6 +39,7 @@ from web_interaction.exclusion import load_exclusion_list, exclusion_list, delet
     insert_exclusion_record
 from web_interaction.reference import reference_list
 from web_interaction.symbol import symbol_list, delete_record, insert_record
+from web_interaction.user import get_all_users, add_user_into_db
 
 app = Flask(__name__)
 CORS(app)
@@ -95,14 +96,6 @@ def execute_in_parallel(temp_table_name, exchanges):
         wait(futures)
 
 
-@app.route('/api/get', methods=['GET'])
-def test():
-    temp_table_name = create_temp_table()
-
-    okx(temp_table_name)
-    return "Success", 200
-
-
 @app.route('/api/get-analysis-data', methods=['GET'])
 def get_analysis_data():
     start_time = time.time()
@@ -135,9 +128,28 @@ def get_exclusion_list():
     return jsonify(data)
 
 
+@app.route('/api/get-symbol-list', methods=['GET'])
+def get_symbol_list():
+    data = symbol_list()
+    return jsonify(data)
+
+
 @app.route('/api/get-reference-list', methods=['GET'])
 def get_reference_list():
     data = reference_list()
+    return jsonify(data)
+
+
+@app.route('/api/get-user-list', methods=['GET'])
+def get_user_list():
+    data = get_all_users()
+    return jsonify(data)
+
+
+@app.route('/api/add-user', methods=['POST'])
+def add_user():
+    data = request.json
+    data = add_user_into_db(data)
     return jsonify(data)
 
 
@@ -148,12 +160,6 @@ def update_exchange_status():
     status = data['status']
     update_status(exchange_id, status)
     return "Success", 200
-
-
-@app.route('/api/get-symbol-list', methods=['GET'])
-def get_symbol_list():
-    data = symbol_list()
-    return jsonify(data)
 
 
 @app.route('/api/delete-symbol', methods=['POST'])
