@@ -1,7 +1,7 @@
 from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
 from my_tools.time_util import get_current_time
-from web_interaction.exchange import get_filtered_symbols_for_exchange
+from web_interaction.exclusion import get_filtered_symbols_for_exchange
 
 logger = setup_logger("xt_processor", "log/app.log")
 

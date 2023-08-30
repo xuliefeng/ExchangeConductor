@@ -34,7 +34,8 @@ from data_collection_proxy.mod8_probit_collector import probit
 
 from database.db_service import get_symbols, create_temp_table, get_reference_price, \
     get_usd_to_cny_rate, delete_temp_table
-from web_interaction.exchange import exchange_list, update_status, exchange_list_used, load_exclusion_list
+from web_interaction.exchange import exchange_list, update_status, exchange_list_used
+from web_interaction.exclusion import load_exclusion_list, exclusion_list, delete_exclusion_record
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 
 app = Flask(__name__)
@@ -126,6 +127,12 @@ def get_exchange_list():
     return jsonify(data)
 
 
+@app.route('/api/get-exclusion-list', methods=['GET'])
+def get_exclusion_list():
+    data = exclusion_list()
+    return jsonify(data)
+
+
 @app.route('/api/update-exchange-status', methods=['POST'])
 def update_exchange_status():
     data = request.json
@@ -146,6 +153,14 @@ def delete_symbol():
     data = request.json
     symbol_id = data['symbolId']
     delete_record(symbol_id)
+    return "Success", 200
+
+
+@app.route('/api/delete-exclusion', methods=['POST'])
+def delete_exclusion():
+    data = request.json
+    exclusion_id = data['exclusionId']
+    delete_exclusion_record(exclusion_id)
     return "Success", 200
 
 
