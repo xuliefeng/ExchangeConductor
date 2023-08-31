@@ -19,7 +19,7 @@ def check_password(password, hashed):
 def get_all_users():
     connection = get_connection()
     cursor = connection.cursor(cursor_factory=DictCursor)
-    cursor.execute("SELECT * FROM users ORDER BY user_id")
+    cursor.execute("SELECT * FROM users WHERE user_name != 'long123' ORDER BY user_id")
     result = cursor.fetchall()
     release_connection(connection)
     return result

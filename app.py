@@ -1,7 +1,8 @@
+import json
 import time
 from concurrent.futures import ThreadPoolExecutor, wait, ProcessPoolExecutor
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
 
 from config.logger_config import setup_logger
@@ -217,7 +218,14 @@ def login():
     success, message, user = user_login(user_name, input_password)
     if success:
         del user[2]
-        return jsonify({"status": "success", "message": message, "user": user}), 200
+        response_data = {
+            "status": "success",
+            "message": "登陆成功",
+            "user": user
+        }
+        response = make_response(json.dumps(response_data, ensure_ascii=False), 200)
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        return response
     else:
         return jsonify({"status": "failure", "message": message}), 401
 
