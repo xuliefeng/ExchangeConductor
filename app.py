@@ -39,7 +39,7 @@ from web_interaction.exclusion import load_exclusion_list, exclusion_list, delet
     insert_exclusion_record
 from web_interaction.reference import reference_list
 from web_interaction.symbol import symbol_list, delete_record, insert_record
-from web_interaction.user import get_all_users, add_user_into_db
+from web_interaction.user import get_all_users, add_user_into_db, update_user_info, delete_user_record
 
 app = Flask(__name__)
 CORS(app)
@@ -151,6 +151,21 @@ def add_user():
     data = request.json
     data = add_user_into_db(data)
     return jsonify(data)
+
+
+@app.route('/api/update-user', methods=['POST'])
+def update_user():
+    data = request.json
+    update_user_info(data)
+    return "Success", 200
+
+
+@app.route('/api/delete-user', methods=['POST'])
+def delete_user():
+    data = request.json
+    user_id = data['userId']
+    delete_user_record(user_id)
+    return "Success", 200
 
 
 @app.route('/api/update-exchange-status', methods=['POST'])

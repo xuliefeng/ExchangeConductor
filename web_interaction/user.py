@@ -35,7 +35,12 @@ def add_user_into_db(data):
     release_connection(connection)
 
 
-def update_user_info(user_id, new_password=None, new_status=None, new_expire_date=None):
+def update_user_info(data):
+    user_id = data['userId']
+    new_password = data.get('password', None)
+    new_status = data.get('status', None)
+    new_expire_date = data.get('expiryDays', None)
+
     connection = get_connection()
     cursor = connection.cursor(cursor_factory=DictCursor)
 
@@ -49,6 +54,10 @@ def update_user_info(user_id, new_password=None, new_status=None, new_expire_dat
 
     if new_status is not None:
         updates.append("status = %s")
+        if new_status == 'normal':
+            new_status = 1
+        else:
+            new_status = 0
         values.append(new_status)
 
     if new_expire_date is not None:
@@ -64,7 +73,7 @@ def update_user_info(user_id, new_password=None, new_status=None, new_expire_dat
     release_connection(connection)
 
 
-def delete_user(user_id):
+def delete_user_record(user_id):
     connection = get_connection()
     cursor = connection.cursor(cursor_factory=DictCursor)
     cursor.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
