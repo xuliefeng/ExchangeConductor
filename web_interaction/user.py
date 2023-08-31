@@ -13,7 +13,6 @@ def hash_password(password):
 
 def check_password(password, hashed):
     bytes_hash = codecs.decode(hashed.replace('\\x', ''), 'hex')
-    print(bytes_hash)
     return bcrypt.checkpw(password.encode('utf-8'), bytes_hash)
 
 
