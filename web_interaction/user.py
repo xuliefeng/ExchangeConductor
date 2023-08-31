@@ -1,3 +1,5 @@
+import codecs
+
 import bcrypt
 from psycopg2.extras import DictCursor
 
@@ -10,7 +12,9 @@ def hash_password(password):
 
 
 def check_password(password, hashed):
-    return bcrypt.checkpw(password.encode('utf-8'), hashed)
+    bytes_hash = codecs.decode(hashed.replace('\\x', ''), 'hex')
+    print(bytes_hash)
+    return bcrypt.checkpw(password.encode('utf-8'), bytes_hash)
 
 
 def get_all_users():
@@ -88,13 +92,14 @@ def user_login(user_name, input_password):
     cursor.execute("SELECT * FROM users WHERE user_name = %s", (user_name,))
     user = cursor.fetchone()
     release_connection(connection)
-
     if user:
-        stored_password = user['password']
-
+        stored_password = user[2]
+        status = user[4]
+        if status != 1:
+            return False, "账户已过期", None
         if check_password(input_password, stored_password):
-            return "Login successful!", user
+            return True, "登陆成功", user
         else:
-            return "Invalid password", None
+            return False, "密码错误", None
     else:
-        return "User not found", None
+        return False, "账户不存在", None

@@ -39,7 +39,7 @@ from web_interaction.exclusion import load_exclusion_list, exclusion_list, delet
     insert_exclusion_record
 from web_interaction.reference import reference_list
 from web_interaction.symbol import symbol_list, delete_record, insert_record
-from web_interaction.user import get_all_users, add_user_into_db, update_user_info, delete_user_record
+from web_interaction.user import get_all_users, add_user_into_db, update_user_info, delete_user_record, user_login
 
 app = Flask(__name__)
 CORS(app)
@@ -206,6 +206,21 @@ def add_exclusion():
     data = request.json
     insert_exclusion_record(data)
     return "Success", 200
+
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    user_name = data['username']
+    input_password = data['password']
+
+    success, message, user = user_login(user_name, input_password)
+    print(user)
+    if success:
+        del user[2]
+        return jsonify({"status": "success", "message": message, "user": user}), 200
+    else:
+        return jsonify({"status": "failure", "message": message}), 401
 
 
 if __name__ == "__main__":
