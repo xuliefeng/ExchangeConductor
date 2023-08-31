@@ -96,10 +96,10 @@ def user_login(user_name, input_password):
         stored_password = user[2]
         status = user[4]
         if status != 1:
-            return False, "账户已过期", None
+            return False, "用户已过期", None
         if check_password(input_password, stored_password):
             return True, "登陆成功", user
         else:
             return False, "密码错误", None
     else:
-        return False, "账户不存在", None
+        return False, "用户不存在", None

@@ -215,7 +215,6 @@ def login():
     input_password = data['password']
 
     success, message, user = user_login(user_name, input_password)
-    print(user)
     if success:
         del user[2]
         return jsonify({"status": "success", "message": message, "user": user}), 200
