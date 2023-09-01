@@ -1,16 +1,10 @@
 import json
-import threading
-import time
-from multiprocessing import Process
 
+from multiprocessing import Process
 from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
-
 from config.logger_config import setup_logger
-from data_analysis.trade_analysis import fetch_combined_analysis_data
-
-from database.db_service import get_symbols, create_temp_table, get_reference_price, \
-    get_usd_to_cny_rate, delete_temp_table
+from config.redis_config import RedisConfig
 from task.task_core import run_task
 from task.task_scheduler import schedule_midnight_task
 from web_interaction.exchange import exchange_list, update_status, exchange_list_used
@@ -23,6 +17,15 @@ from web_interaction.user import get_all_users, add_user_into_db, update_user_in
 app = Flask(__name__)
 CORS(app)
 logger = setup_logger("app", "log/app.log")
+redis_config = RedisConfig()
+
+
+
+
+@app.route('/api/get-analysis-data', methods=['GET'])
+def get_analysis_data():
+    data = redis_config.get_data('data')
+    return jsonify(data)
 
 
 @app.route('/api/get-exchange-list', methods=['GET'])
@@ -141,7 +144,6 @@ def login():
 if __name__ == "__main__":
     p = Process(target=run_task, args=(10,))
     p.start()
-    p2 = Process(target=schedule_midnight_task, args=(10,))
+    p2 = Process(target=schedule_midnight_task)
     p2.start()
     app.run(host="0.0.0.0", port=8080, debug=True, use_reloader=False)
-

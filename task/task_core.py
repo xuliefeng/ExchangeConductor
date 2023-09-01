@@ -1,6 +1,7 @@
 import time
 
 from config.logger_config import setup_logger
+from config.redis_config import RedisConfig
 from data_analysis.trade_analysis import fetch_combined_analysis_data
 from database.db_service import create_temp_table, get_reference_price, get_usd_to_cny_rate, delete_temp_table
 from web_interaction.exchange import exchange_list_used
@@ -35,6 +36,7 @@ from data_collection_proxy.mod8_probit_collector import probit
 from my_tools.time_util import get_current_time
 
 logger = setup_logger("task_core", "log/app.log")
+redis_config = RedisConfig()
 
 exchange_functions = {
     'okx': okx,
@@ -80,7 +82,9 @@ def execute_in_parallel(temp_table_name, exchanges):
 
             if exchange_name in exchange_functions:
                 if exchange_name in special_exchanges:
-                    futures.append(process_executor.submit(exchange_functions[exchange_name], temp_table_name))
+                    # futures.append(process_executor.submit(exchange_functions[exchange_name], temp_table_name))
+                    futures.append(thread_executor.submit(exchange_functions[exchange_name], temp_table_name))
+
                 else:
                     futures.append(thread_executor.submit(exchange_functions[exchange_name], temp_table_name))
 
@@ -97,6 +101,7 @@ def get_analysis_data():
     execute_in_parallel(temp_table_name, exchanges)
 
     data = fetch_combined_analysis_data(temp_table_name)
+    redis_config.set_data('data', data)
     delete_temp_table(temp_table_name)
 
     end_time = time.time()
