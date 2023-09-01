@@ -1,8 +1,6 @@
 import time
 import uuid
-
 import requests
-from flask import jsonify
 
 from config.logger_config import setup_logger
 from database.db_pool import get_connection, release_connection
@@ -15,6 +13,7 @@ def fetch_symbol_names(table_name):
     cursor = connection.cursor()
     cursor.execute(f"SELECT symbol_name FROM {table_name} order by symbol_id;")
     coins = [row[0] for row in cursor.fetchall()]
+    cursor.close()
     release_connection(connection)
     return coins
 
@@ -37,7 +36,7 @@ def create_temp_table():
     # cursor.execute(create_table_depth)
     connection.commit()
     cursor.close()
-    connection.close()
+    release_connection(connection)
 
     return temp_table_name
 
@@ -48,11 +47,10 @@ def delete_temp_table(temp_table_name):
 
     drop_table_query = f"DROP TABLE IF EXISTS {temp_table_name};"
     cursor.execute(drop_table_query)
-    cursor.close()
     connection.commit()
-    connection.close()
+    cursor.close()
+    release_connection(connection)
 
-    return jsonify({"message": f"Table {temp_table_name} deleted successfully!"})
 
 
 def get_reference_price():
@@ -90,7 +88,7 @@ def get_reference_price():
 
     connection.commit()
     cursor.close()
-    connection.close()
+    release_connection(connection)
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)
@@ -117,7 +115,7 @@ def get_usd_to_cny_rate():
 
     connection.commit()
     cursor.close()
-    connection.close()
+    release_connection(connection)
 
     end_time = time.time()
     elapsed_time = round(end_time - start_time, 3)

@@ -49,6 +49,7 @@ def insert_to_db(found_records, temp_table_name):
         cursor.executemany(query, records_to_insert)
         connection.commit()
 
+    cursor.close()
     release_connection(connection)
 
 
