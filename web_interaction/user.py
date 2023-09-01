@@ -29,11 +29,12 @@ def add_user_into_db(data):
     user_name = data['userName']
     password = data['password']
     expiry_days = data['expiryDays']
+    remark = data['remark']
     hashed_password = hash_password(password)
     connection = get_connection()
     cursor = connection.cursor(cursor_factory=DictCursor)
-    cursor.execute("INSERT INTO users (user_name, password, type, status, expire_date) VALUES (%s, %s, %s, %s, %s)",
-                   (user_name, hashed_password, '普通用户', 1, expiry_days))
+    cursor.execute("INSERT INTO users (user_name, password, type, status, expire_date, remark) VALUES (%s, %s, %s, %s, %s, %s)",
+                   (user_name, hashed_password, '普通用户', 1, expiry_days, remark))
     connection.commit()
     release_connection(connection)
 
@@ -43,6 +44,7 @@ def update_user_info(data):
     new_password = data.get('password', None)
     new_status = data.get('status', None)
     new_expire_date = data.get('expiryDays', None)
+    remark = data.get('remark', None)
 
     connection = get_connection()
     cursor = connection.cursor(cursor_factory=DictCursor)
@@ -66,6 +68,10 @@ def update_user_info(data):
     if new_expire_date is not None:
         updates.append("expire_date = %s")
         values.append(new_expire_date)
+
+    if remark is not None:
+        updates.append("remark = %s")
+        values.append(remark)
 
     if updates:
         sql_update_query = "UPDATE users SET " + ", ".join(updates) + " WHERE user_id = %s"
@@ -95,7 +101,7 @@ def user_login(user_name, input_password):
         stored_password = user[2]
         status = user[4]
         if status != 1:
-            return False, "用户已过期", None
+            return False, "用户已过期 " + user[6], None
         if check_password(input_password, stored_password):
             return True, "登陆成功", user
         else:
