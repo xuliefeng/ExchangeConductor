@@ -20,8 +20,6 @@ logger = setup_logger("app", "log/app.log")
 redis_config = RedisConfig()
 
 
-
-
 @app.route('/api/get-analysis-data', methods=['GET'])
 def get_analysis_data():
     data = redis_config.get_data('data')

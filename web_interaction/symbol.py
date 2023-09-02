@@ -1,6 +1,9 @@
 from psycopg2.extras import DictCursor
 
 from database.db_pool import get_connection, release_connection
+from database.db_service import get_symbols
+
+_, reference = get_symbols()
 
 
 def symbol_list():
@@ -35,10 +38,13 @@ def insert_record(symbol_name):
 
     sql_script = """INSERT INTO symbols (symbol_name, remark) VALUES (%s, %s)"""
 
-    values = (
-        [symbol_name,
-         'user']
-    )
-    cursor.execute(sql_script, values)
+    for ref in reference:
+        combined_symbol_name = f"{symbol_name}-{ref}"
+        values = (
+            combined_symbol_name,
+            ''
+        )
+        cursor.execute(sql_script, values)
+
     connection.commit()
     release_connection(connection)
