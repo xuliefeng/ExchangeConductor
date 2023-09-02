@@ -110,10 +110,8 @@ def get_analysis_data():
 
 
 def run_task(seconds):
-    current_time = get_current_time()
-    print(f"task core executed {current_time}")
-    get_analysis_data()
-    time.sleep(seconds)
-    run_task(seconds)
-
-
+    while True:
+        current_time = get_current_time()
+        print(f"task core executed {current_time}")
+        get_analysis_data()
+        time.sleep(seconds)

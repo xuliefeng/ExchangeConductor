@@ -6,10 +6,9 @@ from flask_cors import CORS
 from config.logger_config import setup_logger
 from config.redis_config import RedisConfig
 from task.task_core import run_task
-from task.task_scheduler import schedule_midnight_task
-from web_interaction.exchange import exchange_list, update_status, exchange_list_used
-from web_interaction.exclusion import load_exclusion_list, exclusion_list, delete_exclusion_record, \
-    insert_exclusion_record
+from task.task_midnight import schedule_midnight_task
+from web_interaction.exchange import exchange_list, update_status
+from web_interaction.exclusion import exclusion_list, delete_exclusion_record, insert_exclusion_record
 from web_interaction.reference import reference_list
 from web_interaction.symbol import symbol_list, delete_record, insert_record
 from web_interaction.user import get_all_users, add_user_into_db, update_user_info, delete_user_record, user_login
@@ -56,28 +55,6 @@ def get_user_list():
     return jsonify(data)
 
 
-@app.route('/api/add-user', methods=['POST'])
-def add_user():
-    data = request.json
-    data = add_user_into_db(data)
-    return jsonify(data)
-
-
-@app.route('/api/update-user', methods=['POST'])
-def update_user():
-    data = request.json
-    update_user_info(data)
-    return "Success", 200
-
-
-@app.route('/api/delete-user', methods=['POST'])
-def delete_user():
-    data = request.json
-    user_id = data['userId']
-    delete_user_record(user_id)
-    return "Success", 200
-
-
 @app.route('/api/update-exchange-status', methods=['POST'])
 def update_exchange_status():
     data = request.json
@@ -87,11 +64,10 @@ def update_exchange_status():
     return "Success", 200
 
 
-@app.route('/api/delete-symbol', methods=['POST'])
-def delete_symbol():
+@app.route('/api/add-exclusion', methods=['POST'])
+def add_exclusion():
     data = request.json
-    symbol_id = data['symbolId']
-    delete_record(symbol_id)
+    insert_exclusion_record(data)
     return "Success", 200
 
 
@@ -111,10 +87,33 @@ def add_symbol():
     return "Success", 200
 
 
-@app.route('/api/add-exclusion', methods=['POST'])
-def add_exclusion():
+@app.route('/api/delete-symbol', methods=['POST'])
+def delete_symbol():
     data = request.json
-    insert_exclusion_record(data)
+    symbol_id = data['symbolId']
+    delete_record(symbol_id)
+    return "Success", 200
+
+
+@app.route('/api/add-user', methods=['POST'])
+def add_user():
+    data = request.json
+    data = add_user_into_db(data)
+    return jsonify(data)
+
+
+@app.route('/api/delete-user', methods=['POST'])
+def delete_user():
+    data = request.json
+    user_id = data['userId']
+    delete_user_record(user_id)
+    return "Success", 200
+
+
+@app.route('/api/update-user', methods=['POST'])
+def update_user():
+    data = request.json
+    update_user_info(data)
     return "Success", 200
 
 

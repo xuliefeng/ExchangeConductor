@@ -1,9 +1,7 @@
 import sched
 import time
 from datetime import datetime, timedelta
-
 from database.db_pool import get_connection, release_connection
-from my_tools.time_util import get_current_time
 
 
 def schedule_midnight_task():
@@ -11,7 +9,7 @@ def schedule_midnight_task():
 
     def run_task(sc):
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"Midnight task run at: {current_time}")
+        print(f"task midnight executed {current_time}")
         update_exclusion()
         update_user()
         next_run_time = datetime.now() + timedelta(days=1)
