@@ -139,7 +139,7 @@ def login():
 
 
 if __name__ == "__main__":
-    p = Process(target=run_task, args=(10,))
+    p = Process(target=run_task, args=(5,))
     p.start()
     p2 = Process(target=schedule_midnight_task)
     p2.start()

@@ -8,9 +8,9 @@ from data_processing_proxy.mod6_l_bank_processor import filter_symbols, insert_t
 from proxy_handler.proxy_loader import ProxyRotator
 
 logger = setup_logger("l_bank_collector", "log/app.log")
-# rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod6_l_bank.txt'))
-rotator = ProxyRotator()
-max_concurrent_requests = 300
+rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod6_l_bank.txt'))
+# rotator = ProxyRotator()
+max_concurrent_requests = 100
 retry_limit = 3
 
 

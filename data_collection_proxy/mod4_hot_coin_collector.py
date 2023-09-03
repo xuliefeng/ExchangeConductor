@@ -8,9 +8,9 @@ from data_processing_proxy.mod4_hot_coin_processor import filter_symbols, insert
 from proxy_handler.proxy_loader import ProxyRotator
 
 logger = setup_logger("hot_coin_collector", "log/app.log")
-# rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod4_hot_coin.txt'))
-rotator = ProxyRotator()
-max_concurrent_requests = 200
+rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod4_hot_coin.txt'))
+# rotator = ProxyRotator()
+max_concurrent_requests = 400
 retry_limit = 3
 
 

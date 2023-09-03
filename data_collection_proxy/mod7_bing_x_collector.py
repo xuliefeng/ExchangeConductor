@@ -8,8 +8,8 @@ from data_processing_proxy.mod7_bing_x_processor import filter_symbols, insert_t
 from proxy_handler.proxy_loader import ProxyRotator
 
 logger = setup_logger("bing_x_collector", "log/app.log")
-# rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod7_bing_x.txt'))
-rotator = ProxyRotator()
+rotator = ProxyRotator(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'proxy_handler', 'mod7_bing_x.txt'))
+# rotator = ProxyRotator()
 max_concurrent_requests = 300
 retry_limit = 3
 
