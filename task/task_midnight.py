@@ -1,22 +1,25 @@
 import sched
 import time
 from datetime import datetime, timedelta
+from pytz import timezone
 from database.db_pool import get_connection, release_connection
 
 
 def schedule_midnight_task():
     s = sched.scheduler(time.time, time.sleep)
 
+    shanghai_tz = timezone('Asia/Shanghai')
+
     def run_task(sc):
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time = datetime.now(shanghai_tz).strftime("%Y-%m-%d %H:%M:%S")
         print(f"task midnight executed {current_time}")
         update_exclusion()
         update_user()
-        next_run_time = datetime.now() + timedelta(days=1)
+        next_run_time = datetime.now(shanghai_tz) + timedelta(days=1)
         next_run_time = next_run_time.replace(hour=0, minute=0, second=0, microsecond=0)
         s.enterabs(time.mktime(next_run_time.timetuple()), 1, run_task, (sc,))
 
-    now = datetime.now()
+    now = datetime.now(shanghai_tz)
     midnight = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
     time_to_midnight = (midnight - now).total_seconds()
 

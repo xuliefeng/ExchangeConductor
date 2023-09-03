@@ -5,7 +5,7 @@ from database.db_service import get_symbols
 
 global_exclusion_dict = None
 
-all_symbols, reference = get_symbols()
+all_symbols, _ = get_symbols()
 
 
 def load_exclusion_list():
@@ -68,15 +68,13 @@ def insert_exclusion_record(data):
 
     sql_script = """INSERT INTO exclusion_list (exchange_name, excluded_pair, type, status, expire_date) VALUES (%s, %s, %s, 1, %s)"""
 
-    for ref in reference:
-        excluded_pair = f"{symbol_name}-{ref}"
-        values = (
-            exchange_name,
-            excluded_pair,
-            exclusion_type,
-            expiry_days
-        )
-        cursor.execute(sql_script, values)
+    values = (
+        exchange_name,
+        symbol_name,
+        exclusion_type,
+        expiry_days
+    )
+    cursor.execute(sql_script, values)
 
     connection.commit()
     release_connection(connection)

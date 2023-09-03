@@ -32,7 +32,9 @@ WITH Combined AS (
     FROM Combined c
     JOIN reference r ON split_part(c.symbol_name, '-', 2) = r.symbol_name
     JOIN usd_to_cny_rate u ON 1 = 1
-    WHERE c.price_diff_percentage >= 3
+--     WHERE c.price_diff_percentage >= 3
+    WHERE c.price_diff_percentage IS NOT NULL 
+
 )
 SELECT 
     symbol_name,
