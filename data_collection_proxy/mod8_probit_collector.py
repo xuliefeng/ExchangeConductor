@@ -16,18 +16,19 @@ retry_limit = 3
 
 def probit(temp_table_name):
     start_time = time.time()
-    data = asyncio.run(probit_symbols())
-    if data:
-        found_records = filter_symbols(data)
-        result = asyncio.run(probit_depth(found_records))
-        insert_to_db(result, temp_table_name)
+    try:
+        data = asyncio.run(probit_symbols())
+        if data:
+            found_records = filter_symbols(data)
+            result = asyncio.run(probit_depth(found_records))
+            insert_to_db(result, temp_table_name)
 
-        end_time = time.time()
-        elapsed_time = round(end_time - start_time, 3)
-        logger.info(
-            f"-------------------------------------------------- probit executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
-    else:
-        logger.error("Failed to get tickers from probit")
+            end_time = time.time()
+            elapsed_time = round(end_time - start_time, 3)
+            logger.info(
+                f"-------------------------------------------------- probit executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
+    except Exception as e:
+        logger.error("Failed to get tickers from probit", e)
 
 
 async def probit_symbols():

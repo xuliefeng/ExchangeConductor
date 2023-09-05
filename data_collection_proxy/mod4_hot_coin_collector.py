@@ -16,18 +16,19 @@ retry_limit = 3
 
 def hot_coin(temp_table_name):
     start_time = time.time()
-    data = asyncio.run(hot_coin_symbols())
-    if data:
-        found_records = filter_symbols(data)
-        result = asyncio.run(hot_coin_depth(found_records))
-        insert_to_db(result, temp_table_name)
+    try:
+        data = asyncio.run(hot_coin_symbols())
+        if data:
+            found_records = filter_symbols(data)
+            result = asyncio.run(hot_coin_depth(found_records))
+            insert_to_db(result, temp_table_name)
 
-        end_time = time.time()
-        elapsed_time = round(end_time - start_time, 3)
-        logger.info(
-            f"-------------------------------------------------- hot_coin executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
-    else:
-        logger.error("Failed to get tickers from hot_coin")
+            end_time = time.time()
+            elapsed_time = round(end_time - start_time, 3)
+            logger.info(
+                f"-------------------------------------------------- hot_coin executed in {elapsed_time} seconds. ----- symbols : {len(found_records)} success : {len(result)}")
+    except Exception as e:
+        logger.error("Failed to get tickers from hot_coin", e)
 
 
 async def hot_coin_symbols():

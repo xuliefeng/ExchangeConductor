@@ -115,3 +115,8 @@ def run_task(seconds):
         print(f"task core executed {current_time}")
         get_analysis_data()
         time.sleep(seconds)
+
+
+# load_exclusion_list()
+# temp_table_name = create_temp_table()
+# bi_ka(temp_table_name)
