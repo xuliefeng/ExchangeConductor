@@ -1,5 +1,4 @@
 from psycopg2.extras import DictCursor
-
 from database.db_pool import get_connection, release_connection
 
 
@@ -13,6 +12,7 @@ def reference_list():
 
     cursor.execute(sql_script)
     result = cursor.fetchall()
+    cursor.close()
     release_connection(connection)
 
     return result

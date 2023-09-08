@@ -2,7 +2,10 @@ import sched
 import time
 from datetime import datetime, timedelta
 from pytz import timezone
+from config.logger_config import setup_logger
 from database.db_pool import get_connection, release_connection
+
+logger = setup_logger("task_midnight", "log/app.log")
 
 
 def schedule_midnight_task():
@@ -12,7 +15,7 @@ def schedule_midnight_task():
 
     def run_task(sc):
         current_time = datetime.now(shanghai_tz).strftime("%Y-%m-%d %H:%M:%S")
-        print(f"task midnight executed {current_time}")
+        logger.info(f"midnight task executed {current_time}")
         update_exclusion()
         update_user()
         next_run_time = datetime.now(shanghai_tz) + timedelta(days=1)
@@ -51,7 +54,7 @@ def update_exclusion():
         cursor.close()
         release_connection(connection)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")
 
 
 def update_user():
@@ -76,4 +79,4 @@ def update_user():
         cursor.close()
         release_connection(connection)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")

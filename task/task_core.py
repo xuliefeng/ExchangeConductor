@@ -3,8 +3,8 @@ import time
 from config.logger_config import setup_logger
 from config.redis_config import RedisConfig
 from data_analysis.trade_analysis import fetch_combined_analysis_data
-from database.db_service import create_temp_table, get_reference_price, get_usd_to_cny_rate, delete_temp_table
-from web_interaction.exchange import exchange_list_used
+from database.db_service import create_temp_table, delete_temp_table
+from web_interaction.exchange import load_exchanges
 from web_interaction.exclusion import load_exclusion_list
 from concurrent.futures import ThreadPoolExecutor, wait, ProcessPoolExecutor
 
@@ -69,12 +69,11 @@ exchange_functions = {
 special_exchanges = ['gateio', 'coinw', 'bika', 'hotcoin', 'digifinex', 'lbank', 'bingx', 'probit']
 
 
-def execute_in_parallel(temp_table_name, exchanges):
+def execute_in_parallel(exchanges, temp_table_name):
     with ThreadPoolExecutor() as thread_executor, ProcessPoolExecutor() as process_executor:
 
         futures = [
-            thread_executor.submit(get_reference_price),
-            thread_executor.submit(get_usd_to_cny_rate)
+            # thread_executor.submit(get_usd_to_cny_rate)
         ]
 
         for item in exchanges:
@@ -83,10 +82,12 @@ def execute_in_parallel(temp_table_name, exchanges):
             if exchange_name in exchange_functions:
                 if exchange_name in special_exchanges:
                     # futures.append(process_executor.submit(exchange_functions[exchange_name], temp_table_name))
-                    futures.append(thread_executor.submit(exchange_functions[exchange_name], temp_table_name))
+                    futures.append(
+                        thread_executor.submit(exchange_functions[exchange_name], temp_table_name))
 
                 else:
-                    futures.append(thread_executor.submit(exchange_functions[exchange_name], temp_table_name))
+                    futures.append(
+                        thread_executor.submit(exchange_functions[exchange_name], temp_table_name))
 
         wait(futures)
 
@@ -94,14 +95,14 @@ def execute_in_parallel(temp_table_name, exchanges):
 def get_analysis_data():
     start_time = time.time()
 
-    exchanges = exchange_list_used()
-    temp_table_name = create_temp_table()
     load_exclusion_list()
+    exchanges = load_exchanges()
+    temp_table_name = create_temp_table()
 
-    execute_in_parallel(temp_table_name, exchanges)
+    execute_in_parallel(exchanges, temp_table_name)
 
-    data = fetch_combined_analysis_data(temp_table_name)
-    redis_config.set_data('data', data)
+    result = fetch_combined_analysis_data(temp_table_name)
+    redis_config.set_data('result', result)
     delete_temp_table(temp_table_name)
 
     end_time = time.time()
@@ -112,11 +113,6 @@ def get_analysis_data():
 def run_task(seconds):
     while True:
         current_time = get_current_time()
-        print(f"task core executed {current_time}")
+        logger.info(f"core task executed {current_time}")
         get_analysis_data()
         time.sleep(seconds)
-
-
-# load_exclusion_list()
-# temp_table_name = create_temp_table()
-# bi_ka(temp_table_name)

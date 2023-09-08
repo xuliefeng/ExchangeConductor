@@ -1,6 +1,6 @@
-import time
 import uuid
-import requests
+
+from psycopg2.extras import DictCursor
 
 from config.logger_config import setup_logger
 from database.db_pool import get_connection, release_connection
@@ -52,72 +52,17 @@ def delete_temp_table(temp_table_name):
     release_connection(connection)
 
 
-
-def get_reference_price():
-    start_time = time.time()
-    symbols = ['TUSD',
-               'BUSD',
-               'USDC',
-               'DAI',
-               'USD',
-               'BTC',
-               'ETH',
-               'LUSD',
-               'USDP',
-               'XAUT',
-               'GUSD',
-               'EUROC',
-               'EURS',
-               'RSR']
-
-    joined_symbols = ','.join(symbols)
-    url = f"https://min-api.cryptocompare.com/data/pricemulti?fsyms={joined_symbols}&tsyms=USDT"
-    response = requests.get(url)
-    data = response.json()
-    prices_list = [(key, value['USDT']) for key, value in data.items()]
-
+def usd_to_cny_rate():
     connection = get_connection()
-    cursor = connection.cursor()
+    cursor = connection.cursor(cursor_factory=DictCursor)
 
-    for currency, price in prices_list:
-        cursor.execute("""
-            UPDATE reference 
-            SET price = %s
-            WHERE symbol_name = %s;
-        """, (price, currency))
+    sql_script = """
+        SELECT * FROM usd_to_cny_rate
+    """
 
-    connection.commit()
+    cursor.execute(sql_script)
+    result = cursor.fetchall()
     cursor.close()
     release_connection(connection)
 
-    end_time = time.time()
-    elapsed_time = round(end_time - start_time, 3)
-    logger.info(
-        f"-------------------------------------------------- get_reference_price executed in {elapsed_time} seconds.")
-
-
-def get_usd_to_cny_rate():
-    start_time = time.time()
-    url = "https://open.er-api.com/v6/latest/USD"
-    response = requests.get(url)
-
-    data = response.json()
-    cny_rate = data['rates']['CNY']
-
-    connection = get_connection()
-    cursor = connection.cursor()
-
-    cursor.execute("""
-        UPDATE usd_to_cny_rate 
-        SET rate = %s
-        WHERE name = 'CNY';
-    """, (cny_rate,))
-
-    connection.commit()
-    cursor.close()
-    release_connection(connection)
-
-    end_time = time.time()
-    elapsed_time = round(end_time - start_time, 3)
-    logger.info(
-        f"-------------------------------------------------- get_usd_to_cny_rate executed in {elapsed_time} seconds.")
+    return result

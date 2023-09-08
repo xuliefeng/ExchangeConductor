@@ -29,8 +29,8 @@ def insert_to_db(found_records, temp_table_name):
 
     query = f"""
         INSERT INTO {temp_table_name} (
-            symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'bitget');
+            symbol_name, reference, bid, bid_size, ask, ask_size, update_time, exchange_name
+        ) VALUES (%s, %s, %s, %s, %s, %s, '{current_time}', 'bitget');
     """
 
     batch_size = 1000
@@ -38,7 +38,8 @@ def insert_to_db(found_records, temp_table_name):
         batch = found_records[i:i + batch_size]
         records_to_insert = [
             (
-                record[0],
+                record[0].split('-')[0],
+                record[0].split('-')[1],
                 record[1]['bestBid'],
                 record[1]['bidSz'],
                 record[1]['bestAsk'],

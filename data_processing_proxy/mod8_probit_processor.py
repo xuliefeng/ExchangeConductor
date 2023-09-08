@@ -1,4 +1,3 @@
-
 from config.logger_config import setup_logger
 from database.db_pool import release_connection, get_connection
 from my_tools.time_util import get_current_time
@@ -28,8 +27,8 @@ def insert_to_db(found_records, temp_table_name):
 
     query_temp_table = f"""
         INSERT INTO {temp_table_name} (
-            symbol_name, ask, bid, ask_size, bid_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'probit');
+            symbol_name, reference, ask, bid, ask_size, bid_size, update_time, exchange_name
+        ) VALUES (%s, %s, %s, %s, %s, %s, '{current_time}', 'probit');
     """
 
     records_to_insert_temp = []
@@ -41,6 +40,9 @@ def insert_to_db(found_records, temp_table_name):
             continue
 
         try:
+            reference = str(symbol_name).split('-')[1]
+            symbol_name = str(symbol_name).split('-')[0]
+
             buy_data = [item for item in data if item['side'] == 'buy']
             sell_data = [item for item in data if item['side'] == 'sell']
 
@@ -53,7 +55,7 @@ def insert_to_db(found_records, temp_table_name):
             bid_size = buy_data[-1]['quantity'] if buy_data else None
 
             records_to_insert_temp.append(
-                (symbol_name, ask_price, bid_price, ask_size, bid_size)
+                (symbol_name, reference, ask_price, bid_price, ask_size, bid_size)
             )
         except (IndexError, TypeError, ValueError) as e:
             logger.error(f"Error processing ask/bid price for symbol {symbol_name}. Error: {repr(e)}")

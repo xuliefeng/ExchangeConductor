@@ -28,8 +28,8 @@ def insert_to_db(found_records, temp_table_name):
 
     query = f"""
         INSERT INTO {temp_table_name} (
-            symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'coinex');
+            symbol_name, reference, bid, bid_size, ask, ask_size, update_time, exchange_name
+        ) VALUES (%s, %s, %s, %s, %s, %s, '{current_time}', 'coinex');
     """
 
     records_to_insert = []
@@ -43,7 +43,8 @@ def insert_to_db(found_records, temp_table_name):
 
         records_to_insert.append(
             (
-                symbol_name,
+                symbol_name.split('-')[0],
+                symbol_name.split('-')[1],
                 buy,
                 buy_amount,
                 sell,

@@ -5,8 +5,10 @@ from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
 from config.logger_config import setup_logger
 from config.redis_config import RedisConfig
+from database.db_service import usd_to_cny_rate
 from task.task_core import run_task
 from task.task_midnight import schedule_midnight_task
+from task.task_ten_minute import schedule_ten_minute_task
 from web_interaction.exchange import exchange_list, update_status
 from web_interaction.exclusion import exclusion_list, delete_exclusion_record, insert_exclusion_record
 from web_interaction.reference import reference_list
@@ -21,7 +23,7 @@ redis_config = RedisConfig()
 
 @app.route('/api/get-analysis-data', methods=['GET'])
 def get_analysis_data():
-    data = redis_config.get_data('data')
+    data = redis_config.get_data('result')
     return jsonify(data)
 
 
@@ -138,9 +140,17 @@ def login():
         return jsonify({"status": "failure", "message": message}), 401
 
 
+@app.route('/api/get-rate', methods=['GET'])
+def get_rate():
+    data = usd_to_cny_rate()
+    return jsonify(data)
+
+
 if __name__ == "__main__":
-    p = Process(target=run_task, args=(5,))
+    p = Process(target=run_task, args=(10,))
     p.start()
     p2 = Process(target=schedule_midnight_task)
     p2.start()
+    p3 = Process(target=schedule_ten_minute_task)
+    p3.start()
     app.run(host="0.0.0.0", port=8080, debug=True, use_reloader=False)

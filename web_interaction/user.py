@@ -21,6 +21,7 @@ def get_all_users():
     cursor = connection.cursor(cursor_factory=DictCursor)
     cursor.execute("SELECT * FROM users WHERE user_name != 'long' ORDER BY user_id")
     result = cursor.fetchall()
+    cursor.close()
     release_connection(connection)
     return result
 
@@ -36,6 +37,7 @@ def add_user_into_db(data):
     cursor.execute("INSERT INTO users (user_name, password, type, status, expire_date, remark) VALUES (%s, %s, %s, %s, %s, %s)",
                    (user_name, hashed_password, '普通用户', 1, expiry_days, remark))
     connection.commit()
+    cursor.close()
     release_connection(connection)
 
 
@@ -79,6 +81,7 @@ def update_user_info(data):
         cursor.execute(sql_update_query, values)
         connection.commit()
 
+    cursor.close()
     release_connection(connection)
 
 
@@ -87,6 +90,7 @@ def delete_user_record(user_id):
     cursor = connection.cursor(cursor_factory=DictCursor)
     cursor.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
     connection.commit()
+    cursor.close()
     release_connection(connection)
 
 
@@ -96,6 +100,7 @@ def user_login(user_name, input_password):
 
     cursor.execute("SELECT * FROM users WHERE user_name = %s", (user_name,))
     user = cursor.fetchone()
+    cursor.close()
     release_connection(connection)
     if user:
         stored_password = user[2]

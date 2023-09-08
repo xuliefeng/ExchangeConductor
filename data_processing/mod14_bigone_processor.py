@@ -27,8 +27,8 @@ def insert_to_db(found_records, temp_table_name):
 
     query = f"""
         INSERT INTO {temp_table_name} (
-            symbol_name, bid, bid_size, ask, ask_size, update_time, exchange_name
-        ) VALUES (%s, %s, %s, %s, %s, '{current_time}', 'bigone');
+            symbol_name, reference, bid, bid_size, ask, ask_size, update_time, exchange_name
+        ) VALUES (%s, %s, %s, %s, %s, %s, '{current_time}', 'bigone');
     """
 
     batch_size = 1000
@@ -47,7 +47,7 @@ def insert_to_db(found_records, temp_table_name):
                 ask_quantity = record.get('ask', {}).get('quantity', '')
 
                 if all([asset_pair_name, bid_price, bid_quantity, ask_price, ask_quantity]):
-                    records_to_insert.append((asset_pair_name, bid_price, bid_quantity, ask_price, ask_quantity))
+                    records_to_insert.append((asset_pair_name.split('-')[0], asset_pair_name.split('-')[1], bid_price, bid_quantity, ask_price, ask_quantity))
 
             except Exception as e:
                 logger.error(f"Error processing record {record}. Error: {e}")
