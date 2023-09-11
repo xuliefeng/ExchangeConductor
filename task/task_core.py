@@ -116,3 +116,8 @@ def run_task(seconds):
         logger.info(f"core task executed {current_time}")
         get_analysis_data()
         time.sleep(seconds)
+
+
+load_exclusion_list()
+temp_table_name = create_temp_table()
+deep_coin(temp_table_name)

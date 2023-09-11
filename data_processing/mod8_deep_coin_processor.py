@@ -37,6 +37,7 @@ def insert_to_db(found_records, temp_table_name):
         records_to_insert = [
             (
                 record['instId'].split('-')[0],
+                record['instId'].split('-')[1],
                 record['bidPx'],
                 record['bidSz'],
                 record['askPx'],
